@@ -22,10 +22,14 @@ public class Map2 extends JFrame implements Runnable {
 		printf("iman is watching you terminal");
 		JFrame window = new JFrame("Scotland Yard");
 		setTitle("Scotland Yard");
-		window.setExtendedState(Frame.MAXIMIZED_BOTH);
+		Dimension a = Toolkit.getDefaultToolkit().getScreenSize();
+		printf(a.getWidth());
+		printf(a.getHeight());
+		window.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		window.setResizable(true);
 		window.setVisible(true);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		window.pack();
 
 
 		URL london = this.getClass().getResource("map.jpg");
@@ -62,6 +66,7 @@ public class Map2 extends JFrame implements Runnable {
 		printf(desDimension.getHeight());*/
 		BufferedImage resized = resize(buffered, desDimension);
 		JLabel background  = new JLabel(new ImageIcon(resized));
+		window.setResizable(false);
 		window.getContentPane().add(background);
 		window.pack();
 	}
