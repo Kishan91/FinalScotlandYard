@@ -10,6 +10,7 @@ public class Game {
 	public void run()
 	{
 		GameState state = new GameState();
+		
 		GUI gui = new GUI();
 		gui.registerMapVisualisable(state);
 		

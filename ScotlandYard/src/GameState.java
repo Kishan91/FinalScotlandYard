@@ -2,10 +2,10 @@
  * Class that will hold the state of the game. This is the class that will need
  * to implement the interfaces that we have provided you with
  */
-public class GameState implements MapVisualisable {
+public class GameState implements MapVisualisable, Initialisable{
 	
 	/**
-	 * Vairable that will hold the filename for the map
+	 * Variable that will hold the filename for the map
 	 */
 	private String mapFilename;
 	
@@ -19,4 +19,13 @@ public class GameState implements MapVisualisable {
 		return mapFilename;
 	}
 
+
+	@Override
+	public Boolean initialiseGame(Integer numberOfDetectives) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	
 }
