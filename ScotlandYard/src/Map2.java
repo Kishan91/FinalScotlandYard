@@ -4,11 +4,11 @@ import java.net.*;
 import java.awt.image.*;
 import javax.imageio.*;
 
-public class Map extends JFrame implements Runnable {
+public class Map2 extends JFrame implements Runnable {
 
 	public static void main(String[] args) 
 	{
-		Map map = new Map();
+		Map2 map = new Map2();
 		map.run();
 	}
 
@@ -19,6 +19,7 @@ public class Map extends JFrame implements Runnable {
 		double height = screenSize.getHeight();
 		width = width*0.8;
 		height = height*0.8;*/
+		printf("iman is watching you terminal");
 		JFrame window = new JFrame("Scotland Yard");
 		setTitle("Scotland Yard");
 		window.setExtendedState(Frame.MAXIMIZED_BOTH);
@@ -36,19 +37,29 @@ public class Map extends JFrame implements Runnable {
 		}
 		int width = (int) window.getWidth();
 		int height = (int) window.getHeight();
-		printf("\n");
+		/*printf("\n");
 		printf(width);
-		printf(height);
+		printf(height);*/
 		BufferedImage buffered = image;
+		int buffHeight= (int) buffered.getHeight();
+		int buffWidth = (int) buffered.getWidth();
+		printf(buffWidth);
 
-		int buffHeight = 1018;
+		printf(buffHeight);
+		/*int buffHeight = 1018;
 		int buffWidth = 809;
-		printf("\n");
+		printf("\n");*/
 		Dimension buffDimension = new Dimension(buffWidth,buffHeight);
 		Dimension desDimension =  new Dimension(width,height);
 		desDimension = aspectRatio(buffDimension,desDimension);
-		printf(desDimension.getWidth());
-		printf(desDimension.getHeight());
+		printf("\n");
+		printf (desDimension.getWidth());
+		printf("\n");
+		printf (desDimension.getHeight());
+
+
+		/*printf(desDimension.getWidth());
+		printf(desDimension.getHeight());*/
 		BufferedImage resized = resize(buffered, desDimension);
 		JLabel background  = new JLabel(new ImageIcon(resized));
 		window.getContentPane().add(background);
