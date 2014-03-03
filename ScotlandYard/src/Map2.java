@@ -71,7 +71,7 @@ public class Map2 extends JFrame implements Runnable {
 		System.out.print(o);
 	}
 
-	private Dimension aspectRatio (Dimension image, Dimension requiredImage)
+	/*private Dimension aspectRatio (Dimension image, Dimension requiredImage)
 	{
 		int original_width = (int) image.getWidth();
 		int original_height = (int) image.getHeight();
@@ -85,8 +85,35 @@ public class Map2 extends JFrame implements Runnable {
 		}
 		else designer_width =  (int) designer_height * original_ratio;
 		image = new Dimension(designer_width, designer_height);
-		return image;
-	}
+		return image;*/
+		private Dimension aspectRatio(Dimension imgSize, Dimension boundary) {
+
+    int original_width = imgSize.width;
+    int original_height = imgSize.height;
+    int bound_width = boundary.width;
+    int bound_height = boundary.height;
+    int new_width = original_width;
+    int new_height = original_height;
+
+    // first check if we need to scale width
+    if (original_width > bound_width) {
+        //scale width to fit
+        new_width = bound_width;
+        //scale height to maintain aspect ratio
+        new_height = (new_width * original_height) / original_width;
+    }
+
+    // then check if we need to scale even with the new height
+    if (new_height > bound_height) {
+        //scale height to fit instead
+        new_height = bound_height;
+        //scale width to maintain aspect ratio
+        new_width = (new_height * original_width) / original_height;
+    }
+
+    return new Dimension(new_width, new_height);
+}
+	
 
 	public static BufferedImage resize(BufferedImage image, Dimension requiredImage) 
 	{
