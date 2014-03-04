@@ -12,7 +12,7 @@ public class Map2 extends JFrame implements Runnable {
 		map.run();
 	}
 
-	private void run()
+	public void run()
 	{
 		JFrame window = new JFrame("Scotland Yard");
 		setTitle("Scotland Yard");
@@ -37,19 +37,34 @@ public class Map2 extends JFrame implements Runnable {
 		} catch (Exception e){
 			System.exit(1);
 		}
-		int width = (int) window.getWidth();
-		int height = (int) window.getHeight();
 		BufferedImage buffered = image;
 		int buffHeight= (int) buffered.getHeight();
 		int buffWidth = (int) buffered.getWidth();
 		Dimension buffDimension = new Dimension(buffWidth,buffHeight);
-		Dimension desDimension =  new Dimension(width,height);
+		Dimension desDimension =  scale(a,0.80);
 		desDimension = aspectRatio(buffDimension,desDimension);
 		BufferedImage resized = resize(buffered, desDimension);
 		JLabel background  = new JLabel(new ImageIcon(resized));
-		window.setResizable(false);
 		window.getContentPane().add(background);
 		window.pack();
+	}
+
+	private Dimension scale (Dimension a, double scale)
+	{
+		double height = a.getHeight();
+		double width = a.getWidth();
+		// scale is a decimalised percentage 
+		double adjWidth = width*scale;
+		double ratio = width/height;
+		double adjHeight = adjWidth/ratio;
+		a = new Dimension(adjWidth,adjHeight);
+		return a;
+	}
+
+
+
+
+
 	}
 
 	private void printf(Object o)
