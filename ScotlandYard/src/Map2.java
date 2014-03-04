@@ -57,15 +57,10 @@ public class Map2 extends JFrame implements Runnable {
 		double adjWidth = width*scale;
 		double ratio = width/height;
 		double adjHeight = adjWidth/ratio;
-		a = new Dimension(adjWidth,adjHeight);
+		a = new Dimension((int)adjWidth,(int)adjHeight);
 		return a;
 	}
 
-
-
-
-
-	}
 
 	private void printf(Object o)
 	{
