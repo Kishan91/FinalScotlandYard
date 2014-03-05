@@ -52,12 +52,9 @@ public class GameState implements MapVisualisable, Initialisable{
 		MrX mrX = new MrX();
 		int idxX = new Random().nextInt(MrXstartPos.length);
 		mrX.setPosition(MrXstartPos[idxX]);
-		
-		
-		
 		return null;
 	}
-
+	
 	
 	
 }
