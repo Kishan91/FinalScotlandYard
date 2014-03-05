@@ -11,6 +11,20 @@ import java.util.Random;
  * to implement the interfaces that we have provided you with
  */
 public class GameState implements MapVisualisable, Initialisable{
+	
+	private class Coordinate
+	{
+		int x;
+		int y;
+		String type;
+		
+		public Coordinate(int xvalue, int yvalue)
+		{
+			x = xvalue;
+			y = yvalue;
+		}
+	}
+	
 	ArrayList<Detective> listDetectives = new ArrayList<Detective>();
 	private final Integer[] DstartPos = new Integer[]{13,26,29,34,50,53,91,94,103,112,117,132,138,141,155,174,197,198};
     private final Integer[] MrXstartPos = new Integer[]{51, 146, 45, 132, 106, 78, 127, 71, 172, 170, 166, 35, 104};
@@ -39,9 +53,9 @@ public class GameState implements MapVisualisable, Initialisable{
 	}
 
 
-	private Dimension scaleCoordinates(Dimension originalCo)
+	private Coordinate scaleCoordinates(Coordinate originalCo)
 	{
-		Dimension scaledCo = scale(originalCo,scaleFactor);
+		Coordinate scaledCo = scale(originalCo,scaleFactor);
 		return scaledCo;
 	} 
 
@@ -51,15 +65,15 @@ public class GameState implements MapVisualisable, Initialisable{
 		
 	}
 
-	public Dimension scale (Dimension a, double scale)
+	public Coordinate scale (Coordinate a, double scale)
 	{
-		double height = a.getHeight();
-		double width = a.getWidth();
+		double height = a.y;
+		double width = a.x;
 		// scale is a decimalised percentage 
 		double adjWidth = width*scale;
 		double ratio = width/height;
 		double adjHeight = adjWidth/ratio;
-		a = new Dimension((int)adjWidth,(int)adjHeight);
+		a = new Coordinate((int)adjWidth,(int)adjHeight);
 		return a;
 	}
 
@@ -95,10 +109,10 @@ public class GameState implements MapVisualisable, Initialisable{
 		MrX mrX = new MrX();
 		int idxX = new Random().nextInt(MrXstartPos.length);
 		mrX.setPosition(MrXstartPos[idxX]);
-		showPosition(mrX.Position);
+		showPosition(mrX.Position, "MrX");
 		for(Detective a : listDetectives)
 		{
-			showPosition(a.Position);
+			showPosition(a.Position, "Detective");
 		}
 		return null;
 	}
@@ -124,20 +138,20 @@ public class GameState implements MapVisualisable, Initialisable{
         return fileData.toString();
     }
 	
-	private void showPosition(int position)
+	private void showPosition(int position, String type)
 	{
 		String[] coordinates = fileLines1[position].split("\\s+");	
 		int x = Integer.parseInt(coordinates[1]);
 		int y = Integer.parseInt(coordinates[2]);
-		Dimension xy = new Dimension(x, y);
-		Test.printf("\n" + "X co-ordinate" + xy.getWidth());
-		Test.printf("\n" + "Y co-ordinate" + xy.getHeight()); 
-		Dimension scaledxy = scaleCoordinates(xy);
-		Test.printf("\n" + "Adjusted X co-ordinate" + scaledxy.getWidth());
-		Test.printf("\n" + "Adjusted Y co-ordinate" + scaledxy.getHeight()); 
+		Coordinate xy = new Coordinate(x, y);
+		xy.type = type;
+		Test.printf("\n" + "X co-ordinate" + xy.x);
+		Test.printf("\n" + "Y co-ordinate" + xy.y); 
+		Coordinate scaledxy = scaleCoordinates(xy);
+		Test.printf("\n" + "Adjusted X co-ordinate" + scaledxy.x);
+		Test.printf("\n" + "Adjusted Y co-ordinate" + scaledxy.y); 
 		//need to display scaled stuff on screen
-		
-		
+		//made a coordinate class so that i can also store the type of player which you will need when displaying the players on the screen
 		
 	}
 	
