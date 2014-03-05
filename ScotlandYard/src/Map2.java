@@ -41,7 +41,7 @@ public class Map2 extends JFrame implements Runnable {
 		int buffHeight= (int) buffered.getHeight();
 		int buffWidth = (int) buffered.getWidth();
 		Dimension buffDimension = new Dimension(buffWidth,buffHeight);
-		Dimension desDimension =  scale(a,0.80);
+		Dimension desDimension =  scale(a,0.90);
 		desDimension = aspectRatio(buffDimension,desDimension);
 		BufferedImage resized = resize(buffered, desDimension);
 		JLabel background  = new JLabel(new ImageIcon(resized));
