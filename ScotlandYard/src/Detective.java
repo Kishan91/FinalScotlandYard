@@ -32,17 +32,6 @@ public class Detective extends Player {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-	/*
-	public ArrayList<Card> getCards()
-	{
-		return null;
-	}
-	
-	private void setCards()
-	{
-		
-	}
-	*/
 
 	@Override
 	public ArrayList<ArrayList<GameState.TicketType>> getTransport() {

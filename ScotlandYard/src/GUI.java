@@ -5,17 +5,11 @@ import java.awt.image.*;
 import javax.imageio.*;
 
 
-public class GUI extends GameVisualiser implements MapVisualisable {
+public class GUI extends GameVisualiser {
 	
 	private Dimension desDimension;
 	private Dimension buffDimension;
 	private double ratio;
-
-	public static void main(String[] args) 
-	{
-		GUI gui = new GUI();
-		gui.run();
-	}
 
 	private double imageScale()
 	{
@@ -55,11 +49,13 @@ public class GUI extends GameVisualiser implements MapVisualisable {
 
 	private JLabel createImage(Dimension a)
 	{
-		String london = getMapFilename();
 		BufferedImage image = null;
+		URL london = this.getClass().getResource(mapVisualisable.getMapFilename());
+		Test.printf(london.toString());
 		try{
-			image = ImageIO.read(new URL(london));
+			image = ImageIO.read(london);
 		} catch (Exception e){
+			
 			System.exit(1);
 		}
 		BufferedImage buffered = image;
@@ -110,11 +106,6 @@ public class GUI extends GameVisualiser implements MapVisualisable {
     return new Dimension(new_width, new_height);
 	}
 
-	private void printf(Object o)
-	{
-		System.out.print(o);
-	}
-
 	
 	public static BufferedImage resize(BufferedImage image, Dimension requiredImage) 
 	{
@@ -126,12 +117,6 @@ public class GUI extends GameVisualiser implements MapVisualisable {
 	    g2d.drawImage(image, 0, 0, width, height, null);
 	    g2d.dispose();
 	    return bi;
-	}
-
-	@Override
-	public String getMapFilename() {
-		URL london = this.getClass().getResource("map.jpg");
-		return london.toString();
 	}
 
 }

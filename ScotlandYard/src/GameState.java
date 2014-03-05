@@ -14,7 +14,7 @@ public class GameState implements MapVisualisable, Initialisable{
 	/**
 	 * Variable that will hold the filename for the map
 	 */
-	private String mapFilename;
+	private String mapFilename = "map.jpg";
 	
 	
 	/**
@@ -23,6 +23,7 @@ public class GameState implements MapVisualisable, Initialisable{
 	 */
 	public String getMapFilename()
 	{
+		
 		return mapFilename;
 	}
 

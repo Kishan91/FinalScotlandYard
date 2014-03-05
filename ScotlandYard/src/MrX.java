@@ -55,15 +55,6 @@ public class MrX extends Player {
 		
 	}
 	
-	public ArrayList<Card> getSpecial()
-	{
-		return null;
-	}
-	
-	private void setSpecial()
-	{
-		
-	}
 	*/
 	
 }

@@ -13,7 +13,7 @@ public class Game {
 		
 		GUI gui = new GUI();
 		gui.registerMapVisualisable(state);
-		
+		gui.run();
 		//initialise then start your GUI
 	}
 }
