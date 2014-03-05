@@ -95,7 +95,7 @@ public class GameState implements MapVisualisable, Initialisable{
 		}
 		showPosition(mrX.getPosition());
 		
-		
+		//test
 		return null;
 	}
 	
