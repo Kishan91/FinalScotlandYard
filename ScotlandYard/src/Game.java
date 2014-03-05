@@ -14,6 +14,8 @@ public class Game {
 		GUI gui = new GUI();
 		gui.registerMapVisualisable(state);
 		gui.run();
+		state.scaleFactor(gui.scaleFactor());
+		
 		//initialise then start your GUI
 	}
 }
