@@ -10,11 +10,13 @@ public class Game {
 	public void run()
 	{
 		GameState state = new GameState();
-		state.initialiseGame(3);
+		
+		
 		GUI gui = new GUI();
 		gui.registerMapVisualisable(state);
 		gui.run();
-		state.scaleFactor(gui.scaleFactor());
-		//initialise then start your GUI
+		Test.printf("SCALE" + gui.ratio);
+		state.scaleFactor(gui.ratio);
+		state.initialiseGame(3);
 	}
 }

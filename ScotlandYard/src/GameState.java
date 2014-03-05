@@ -1,8 +1,8 @@
 import java.awt.Dimension;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -70,63 +70,82 @@ public class GameState implements MapVisualisable, Initialisable{
 		ArrayList<Integer> idxArray = new ArrayList<Integer>(numberOfDetectives);
 		for(int i = 0; i < numberOfDetectives; i++)
 		{
-			Detective temp = new Detective();
+			idxD = -1;
+			Detective temp = null;
 			while(idxD == -1)
 			{
 				idxD = new Random().nextInt(DstartPos.length);
-				if(idxArray.contains(idxD))
+
+				if(!idxArray.contains(idxD))
 				{
-					temp.setPosition(DstartPos[idxD]); 
-					Test.printf("Detective Position" + DstartPos[idxD]);
+					temp = new Detective();
+					temp.Position = DstartPos[idxD];
 					idxArray.add(idxD);
 				}
 				else idxD = -1;
 			}
 			listDetectives.add(temp);
 		}
-		splitLines();
+		try {
+			splitLines();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		MrX mrX = new MrX();
 		int idxX = new Random().nextInt(MrXstartPos.length);
-		Test.printf("Mr X Position" + idxX);
 		mrX.setPosition(MrXstartPos[idxX]);
-		for(Detective a: listDetectives)
+		showPosition(mrX.Position);
+		for(Detective a : listDetectives)
 		{
-			showPosition(a.getPosition());
+			showPosition(a.Position);
 		}
-		showPosition(mrX.getPosition());
-		
-		//test comment
 		return null;
 	}
 	
-	private void splitLines()
+	private void splitLines() throws IOException
 	{
-		URL positions = this.getClass().getResource("pos.txt");
-		String fileContents = readFile(positions.toString());
+		String fileContents = readFileAsString("pos.txt");
 		fileContents = fileContents.substring(5);
 		fileLines1 = fileContents.split("\n");
 	}
 	
+	private String readFileAsString(String filePath) throws IOException {
+        StringBuffer fileData = new StringBuffer();
+        BufferedReader reader = new BufferedReader(
+                new FileReader(filePath));
+        char[] buf = new char[1024];
+        int numRead=0;
+        while((numRead=reader.read(buf)) != -1){
+            String readData = String.valueOf(buf, 0, numRead);
+            fileData.append(readData);
+        }
+        reader.close();
+        return fileData.toString();
+    }
+	
 	private void showPosition(int position)
 	{
-		String[] coordinates = fileLines1[position].split("\\s+");
+		String[] coordinates = fileLines1[position].split("\\s+");	
 		int x = Integer.parseInt(coordinates[1]);
 		int y = Integer.parseInt(coordinates[2]);
 		Dimension xy = new Dimension(x, y);
-		Test.printf("X co-ordinate" + xy.getWidth());
-		Test.printf("Y co-ordinate" + xy.getHeight());
-		
-		
+		Test.printf("\n" + "X co-ordinate" + xy.getWidth());
+		Test.printf("\n" + "Y co-ordinate" + xy.getHeight()); 
+		Dimension scaledxy = scaleCoordinates(xy);
+		Test.printf("\n" + "Adjusted X co-ordinate" + scaledxy.getWidth());
+		Test.printf("\n" + "Adjusted Y co-ordinate" + scaledxy.getHeight()); 
+		//need to display scaled stuff on screen
 		
 		
 		
 	}
 	
-	public static String readFile(String filepath)
+	public String readFile(String filepath)
 	{
 	   String content = null;
-	   File file = new File(filepath); //for ex foo.txt
 	   try {
+		   File file = new File(filepath);
 	       FileReader reader = new FileReader(file);
 	       char[] chars = new char[(int) file.length()];
 	       reader.read(chars);

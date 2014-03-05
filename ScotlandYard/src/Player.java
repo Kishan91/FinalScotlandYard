@@ -7,7 +7,7 @@ public abstract class Player {
 	ArrayList<GameState.TicketType> tube = new ArrayList<GameState.TicketType>();
 	ArrayList<GameState.TicketType> Sdouble = new ArrayList<GameState.TicketType>();
 	ArrayList<GameState.TicketType> Ssecret = new ArrayList<GameState.TicketType>();
-	private int Position;
+	public int Position;
 	
 	//for part 4
 	public void move()

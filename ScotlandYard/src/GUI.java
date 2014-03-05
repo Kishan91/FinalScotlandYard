@@ -9,18 +9,13 @@ public class GUI extends GameVisualiser {
 	
 	private Dimension desDimension;
 	private Dimension buffDimension;
-	private double ratio;
+	public double ratio;
 
 	private double imageScale()
 	{
 		double height = buffDimension.getHeight();
 		double height2 = desDimension.getHeight();
 		ratio = height/height2;
-		return ratio;
-	}
-
-	public double scaleFactor()
-	{
 		return ratio;
 	}
 
@@ -44,6 +39,7 @@ public class GUI extends GameVisualiser {
 		JLabel background = createImage(a);
 		window.getContentPane().add(background);
 		window.pack();
+		imageScale();
 	}
 
 	private JLabel createImage(Dimension a)
