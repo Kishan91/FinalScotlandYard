@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 
 
 
@@ -43,9 +45,13 @@ public class Detective extends Player {
 	*/
 
 	@Override
-	public String getTransport() {
+	public ArrayList<ArrayList<GameState.TicketType>> getTransport() {
 		// TODO Auto-generated method stub
-		return null;
+		ArrayList<ArrayList<GameState.TicketType>> tickets = new ArrayList<ArrayList<GameState.TicketType>>();
+		tickets.add(bus);
+		tickets.add(tube);
+		tickets.add(taxi);
+		return tickets;
 	}
 
 }

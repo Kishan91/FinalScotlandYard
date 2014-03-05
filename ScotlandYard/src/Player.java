@@ -11,12 +11,9 @@ public abstract class Player {
 	ArrayList<GameState.TicketType> Ssecret = new ArrayList<GameState.TicketType>();
 	private int Position;
 	
+	//for part 4
 	public void move()
 	{
-		
-		
-		
-		
 	}
 	
 	public void setPosition(int p)
@@ -29,6 +26,6 @@ public abstract class Player {
 		return Position;
 	}
 	
-	public abstract String getTransport();
+	public abstract ArrayList<ArrayList<GameState.TicketType>> getTransport();
 
 }
