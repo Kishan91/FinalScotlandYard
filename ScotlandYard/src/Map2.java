@@ -29,7 +29,6 @@ public class Map2 extends JFrame implements Runnable {
 		window.setVisible(true);
 		window.setResizable(false);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		window.pack();
 		URL london = this.getClass().getResource("map.jpg");
 		BufferedImage image = null;
 		try{
