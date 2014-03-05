@@ -5,11 +5,27 @@ import java.awt.image.*;
 import javax.imageio.*;
 
 public class Map extends JFrame implements Runnable {
+	private Dimension desDimension;
+	private Dimension buffDimension;
+	private double ratio;
 
 	public static void main(String[] args) 
 	{
 		Map map = new Map();
 		map.run();
+	}
+
+	private double imageScale()
+	{
+		double height = buffDimension.getHeight();
+		double height2 = desDimension.getHeight();
+		ratio = height/height2;
+		return ratio;
+	}
+
+	public double scaleFactor()
+	{
+		return ratio;
 	}
 
 	public void run()
@@ -46,15 +62,15 @@ public class Map extends JFrame implements Runnable {
 		BufferedImage buffered = image;
 		int buffHeight= (int) buffered.getHeight();
 		int buffWidth = (int) buffered.getWidth();
-		Dimension buffDimension = new Dimension(buffWidth,buffHeight);
-		Dimension desDimension =  scale(a,0.90);
+		buffDimension = new Dimension(buffWidth,buffHeight);
+		desDimension =  scale(a,0.90);
 		desDimension = aspectRatio(buffDimension,desDimension);
 		BufferedImage resized = resize(buffered, desDimension);
 		JLabel background  = new JLabel(new ImageIcon(resized));
 		return background;
 	}
 
-	private Dimension scale (Dimension a, double scale)
+	public Dimension scale (Dimension a, double scale)
 	{
 		double height = a.getHeight();
 		double width = a.getWidth();
@@ -64,12 +80,6 @@ public class Map extends JFrame implements Runnable {
 		double adjHeight = adjWidth/ratio;
 		a = new Dimension((int)adjWidth,(int)adjHeight);
 		return a;
-	}
-
-
-	private void printf(Object o)
-	{
-		System.out.print(o);
 	}
 
 	private Dimension aspectRatio(Dimension imgSize, Dimension boundary) 
@@ -96,6 +106,13 @@ public class Map extends JFrame implements Runnable {
     }
     return new Dimension(new_width, new_height);
 }
+
+
+	private void printf(Object o)
+	{
+		System.out.print(o);
+	}
+
 	
 	public static BufferedImage resize(BufferedImage image, Dimension requiredImage) 
 	{
