@@ -5,7 +5,7 @@ import java.awt.image.*;
 import javax.imageio.*;
 
 
-public class GUI extends GameVisualiser {
+public class GUI extends GameVisualiser implements MapVisualisable {
 	
 	private Dimension desDimension;
 	private Dimension buffDimension;
@@ -32,6 +32,7 @@ public class GUI extends GameVisualiser {
 
 	public void run()
 	{
+		
 		JFrame window = new JFrame("Scotland Yard");
 		window.setTitle("Scotland Yard");
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -54,10 +55,10 @@ public class GUI extends GameVisualiser {
 
 	private JLabel createImage(Dimension a)
 	{
-		URL london = this.getClass().getResource("map.jpg");
+		String london = getMapFilename();
 		BufferedImage image = null;
 		try{
-			image = ImageIO.read(london);
+			image = ImageIO.read(new URL(london));
 		} catch (Exception e){
 			System.exit(1);
 		}
@@ -125,6 +126,12 @@ public class GUI extends GameVisualiser {
 	    g2d.drawImage(image, 0, 0, width, height, null);
 	    g2d.dispose();
 	    return bi;
+	}
+
+	@Override
+	public String getMapFilename() {
+		URL london = this.getClass().getResource("map.jpg");
+		return london.toString();
 	}
 
 }

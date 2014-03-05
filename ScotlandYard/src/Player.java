@@ -29,9 +29,6 @@ public abstract class Player {
 		return Position;
 	}
 	
-	public String getTransport()
-	{
-		return null;
-		
-	}
+	public abstract String getTransport();
+
 }

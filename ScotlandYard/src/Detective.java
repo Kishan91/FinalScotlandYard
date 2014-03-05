@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+
 
 
 public class Detective extends Player {
@@ -41,5 +41,11 @@ public class Detective extends Player {
 		
 	}
 	*/
+
+	@Override
+	public String getTransport() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

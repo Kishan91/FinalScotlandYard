@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 
 
 
@@ -29,9 +31,29 @@ public class MrX extends Player {
 	
 	public boolean isVisible()
 	{
-		return visible;
-		
+		return visible;	
 	}
+
+
+	@Override
+	public String getTransport() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/*
+	@Override
+	public getTransport() {
+		// TODO Auto-generated method stub
+		ArrayList<ArrayList<GameState.TicketType>> tickets = new ArrayList<ArrayList<GameState.TicketType>>();
+		tickets.add(bus);
+		tickets.add(tube);
+		tickets.add(taxi);
+		tickets.add(Ssecret);
+		tickets.add(Sdouble);
+		return tickets;
+	}
+	
 	/*public ArrayList<Card> getUsedTransport()
 	{
 		return null;
