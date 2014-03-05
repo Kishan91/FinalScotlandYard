@@ -1,24 +1,23 @@
-import java.util.ArrayList;
+
 
 
 public class MrX extends Player {
 
-	
+	private boolean visible = false;
 	public MrX()
 	{
-		NumberBusCards bus = new NumberBusCards();
-		NumberTaxiCards taxi = new NumberTaxiCards();
-		NumberUndergroundCards underground = new NumberUndergroundCards();
-		NumberBlackCards black = new NumberBlackCards();
-		NumberDoubleCards doublecard = new NumberDoubleCards();
-		bus.Amount = 3;
-		taxi.Amount = 4;
-		underground.Amount = 3;
-		black.Amount = 4;
-		doublecard.Amount = 2;
+		for(int i = 0; i < 3; i++)
+		{
+			bus.add(GameState.TicketType.Bus); 
+			tube.add(GameState.TicketType.Underground);
+		}
+		for(int i = 0; i < 4; i++)
+		{
+			taxi.add(GameState.TicketType.Taxi);
+			Ssecret.add(GameState.TicketType.SecretMove);
+		}
 		
-		
-		
+		for(int i = 0; i < 2; i++) Sdouble.add(GameState.TicketType.DoubleMove);
 	}
 	
 	
@@ -27,20 +26,13 @@ public class MrX extends Player {
 		// TODO Auto-generated method stub
 		
 	}
-
-	@Override
-	public int getPosition() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 	
 	public boolean isVisible()
 	{
-		return false;
+		return visible;
 		
 	}
-	
-	public ArrayList<Card> getUsedTransport()
+	/*public ArrayList<Card> getUsedTransport()
 	{
 		return null;
 	}
@@ -59,7 +51,6 @@ public class MrX extends Player {
 	{
 		
 	}
-	
-	
+	*/
 	
 }

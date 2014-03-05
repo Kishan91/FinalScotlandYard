@@ -5,14 +5,16 @@ public class Detective extends Player {
 
 	public Detective()
 	{
-		NumberBusCards bus = new NumberBusCards();
-		NumberTaxiCards taxi = new NumberTaxiCards();
-		NumberUndergroundCards underground = new NumberUndergroundCards();
-		bus.Amount = 8;
-		taxi.Amount = 10;
-		underground.Amount = 4;
+		for(int i = 0; i < 8; i++)
+		{
+			bus.add(GameState.TicketType.Bus);
+		}
+		for(int i = 0; i < 10; i++)
+		{
+			taxi.add(GameState.TicketType.Taxi);
+		}
 		
-		
+		for(int i = 0; i < 4; i++) tube.add(GameState.TicketType.DoubleMove);
 		
 		
 	}
@@ -28,7 +30,7 @@ public class Detective extends Player {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-	
+	/*
 	public ArrayList<Card> getCards()
 	{
 		return null;
@@ -38,5 +40,6 @@ public class Detective extends Player {
 	{
 		
 	}
+	*/
 
 }
