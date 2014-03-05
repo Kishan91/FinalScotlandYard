@@ -26,7 +26,6 @@ public class GUI extends GameVisualiser {
 
 	public void run()
 	{
-		
 		JFrame window = new JFrame("Scotland Yard");
 		window.setTitle("Scotland Yard");
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -51,7 +50,6 @@ public class GUI extends GameVisualiser {
 	{
 		BufferedImage image = null;
 		URL london = this.getClass().getResource(mapVisualisable.getMapFilename());
-		Test.printf(london.toString());
 		try{
 			image = ImageIO.read(london);
 		} catch (Exception e){

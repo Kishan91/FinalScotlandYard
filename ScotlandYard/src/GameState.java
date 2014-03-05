@@ -1,5 +1,9 @@
+import java.awt.Dimension;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -11,6 +15,7 @@ public class GameState implements MapVisualisable, Initialisable{
 	private final Integer[] DstartPos = new Integer[]{13,26,29,34,50,53,91,94,103,112,117,132,138,141,155,174,197,198};
     private final Integer[] MrXstartPos = new Integer[]{51, 146, 45, 132, 106, 78, 127, 71, 172, 170, 166, 35, 104};
     double scaleFactor;
+    String[] fileLines1;
     
 	/**
 	 * Variable that will hold the filename for the map
@@ -29,11 +34,9 @@ public class GameState implements MapVisualisable, Initialisable{
 	}
 	
 	public String getMapFilename()
-	{
-		
+	{	
 		return mapFilename;
 	}
-
 
 	@Override
 	public Boolean initialiseGame(Integer numberOfDetectives) {
@@ -49,25 +52,65 @@ public class GameState implements MapVisualisable, Initialisable{
 				if(idxArray.contains(idxD))
 				{
 					temp.setPosition(DstartPos[idxD]); 
+					Test.printf("Detective Position" + DstartPos[idxD]);
 					idxArray.add(idxD);
 				}
 				else idxD = -1;
 			}
 			listDetectives.add(temp);
 		}
-		
+		splitLines();
 		MrX mrX = new MrX();
 		int idxX = new Random().nextInt(MrXstartPos.length);
+		Test.printf("Mr X Position" + idxX);
 		mrX.setPosition(MrXstartPos[idxX]);
-		for(Detetive a: )
-		showPositions()
+		for(Detective a: listDetectives)
+		{
+			showPosition(a.getPosition());
+		}
+		showPosition(mrX.getPosition());
+		
+		
 		return null;
 	}
 	
-	private String[] getFileContents()
+	private void splitLines()
 	{
-		String[] fileContents = null;
-		return fileContents;
+		URL positions = this.getClass().getResource("pos.txt");
+		String fileContents = readFile(positions.toString());
+		fileContents = fileContents.substring(5);
+		fileLines1 = fileContents.split("\n");
+	}
+	
+	private void showPosition(int position)
+	{
+		String[] coordinates = fileLines1[position].split("\\s+");
+		int x = Integer.parseInt(coordinates[1]);
+		int y = Integer.parseInt(coordinates[2]);
+		Dimension xy = new Dimension(x, y);
+		Test.printf("X co-ordinate" + xy.getWidth());
+		Test.printf("Y co-ordinate" + xy.getHeight());
+		
+		
+		
+		
+		
+	}
+	
+	public static String readFile(String filepath)
+	{
+	   String content = null;
+	   File file = new File(filepath); //for ex foo.txt
+	   try {
+	       FileReader reader = new FileReader(file);
+	       char[] chars = new char[(int) file.length()];
+	       reader.read(chars);
+	       content = new String(chars);
+	       reader.close();
+	   } catch (IOException e) {
+	       e.printStackTrace();
+	   }
+	   return content;
 	}
 	
 }
