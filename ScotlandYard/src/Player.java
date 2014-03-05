@@ -2,8 +2,6 @@ import java.util.ArrayList;
 
 
 public abstract class Player {
-	Colour colour;
-	
 	ArrayList<GameState.TicketType> bus = new ArrayList<GameState.TicketType>();
 	ArrayList<GameState.TicketType> taxi = new ArrayList<GameState.TicketType>();
 	ArrayList<GameState.TicketType> tube = new ArrayList<GameState.TicketType>();
