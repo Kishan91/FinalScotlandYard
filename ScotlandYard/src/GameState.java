@@ -34,6 +34,29 @@ public class GameState implements MapVisualisable, Initialisable{
 		return mapFilename;
 	}
 
+	private Dimension scaleCoordinates(Dimension originalCo)
+	{
+		Dimension scaledCo = scale(originalCo,scaleFactor);
+		return scaledCo;
+	} 
+
+
+	public void showPlayer(Dimension player)
+	{
+		
+	}
+
+	public Dimension scale (Dimension a, double scale)
+	{
+		double height = a.getHeight();
+		double width = a.getWidth();
+		// scale is a decimalised percentage 
+		double adjWidth = width*scale;
+		double ratio = width/height;
+		double adjHeight = adjWidth/ratio;
+		a = new Dimension((int)adjWidth,(int)adjHeight);
+		return a;
+	}
 
 	@Override
 	public Boolean initialiseGame(Integer numberOfDetectives) {
