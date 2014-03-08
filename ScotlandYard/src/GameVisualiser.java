@@ -1,8 +1,3 @@
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.concurrent.*;
-
 /**
  * Abstract class that ensures that any inheriting class will be able 
  * to visualise a GameState that implements the correct interfaces. This

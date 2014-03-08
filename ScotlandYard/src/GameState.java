@@ -4,32 +4,24 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
  * Class that will hold the state of the game. This is the class that will need
  * to implement the interfaces that we have provided you with
  */
-public class GameState implements MapVisualisable, Initialisable{
+public class GameState implements MapVisualisable, Initialisable, PlayerVisualisable{
 	
-	private class Coordinate
-	{
-		int x;
-		int y;
-		String type;
-		
-		public Coordinate(int xvalue, int yvalue)
-		{
-			x = xvalue;
-			y = yvalue;
-		}
-	}
+	
 	
 	ArrayList<Detective> listDetectives = new ArrayList<Detective>();
+	ArrayList<MrX> listMrX = new ArrayList<MrX>();
 	private final Integer[] DstartPos = new Integer[]{13,26,29,34,50,53,91,94,103,112,117,132,138,141,155,174,197,198};
     private final Integer[] MrXstartPos = new Integer[]{51, 146, 45, 132, 106, 78, 127, 71, 172, 170, 166, 35, 104};
-    double scaleFactor;
     String[] fileLines1;
+    ArrayList<Integer> mrXIdList;
+    ArrayList<Integer> detectiveIdList;
     
 	/**
 	 * Variable that will hold the filename for the map
@@ -42,47 +34,21 @@ public class GameState implements MapVisualisable, Initialisable{
 	 * @return The map filename
 	 */
 	
-	public void scaleFactor(double guiScaleFactor)
-	{
-		scaleFactor = guiScaleFactor;
-	}
-	
 	public String getMapFilename()
 	{	
 		return mapFilename;
 	}
 
 
-	private Coordinate scaleCoordinates(Coordinate originalCo)
-	{
-		Coordinate scaledCo = scale(originalCo,scaleFactor);
-		return scaledCo;
-	} 
-
-
-	public void showPlayer(Dimension player)
-	{
-		
-	}
-
-	public Coordinate scale (Coordinate a, double scale)
-	{
-		double height = a.y;
-		double width = a.x;
-		// scale is a decimalised percentage 
-		double adjWidth = width*scale;
-		double ratio = width/height;
-		double adjHeight = adjWidth/ratio;
-		a = new Coordinate((int)adjWidth,(int)adjHeight);
-		return a;
-	}
-
 	@Override
 	public Boolean initialiseGame(Integer numberOfDetectives) {
 		// TODO Auto-generated method stub
 		int idxD = -1;
+		mrXIdList = new ArrayList<Integer>();
+		detectiveIdList = new ArrayList<Integer>();
 		ArrayList<Integer> idxArray = new ArrayList<Integer>(numberOfDetectives);
-		for(int i = 0; i < numberOfDetectives; i++)
+		int i;
+		for(i = 0; i < numberOfDetectives; i++)
 		{
 			idxD = -1;
 			Detective temp = null;
@@ -98,7 +64,9 @@ public class GameState implements MapVisualisable, Initialisable{
 				}
 				else idxD = -1;
 			}
+			temp.ID = i;
 			listDetectives.add(temp);
+			detectiveIdList.add(i);
 		}
 		try {
 			splitLines();
@@ -106,14 +74,13 @@ public class GameState implements MapVisualisable, Initialisable{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		MrX mrX = new MrX();
 		int idxX = new Random().nextInt(MrXstartPos.length);
 		mrX.setPosition(MrXstartPos[idxX]);
-		showPosition(mrX.Position, "MrX");
-		for(Detective a : listDetectives)
-		{
-			showPosition(a.Position, "Detective");
-		}
+		mrX.ID = i;
+		listMrX.add(mrX);
+		mrXIdList.add(i);
 		return null;
 	}
 	
@@ -138,23 +105,6 @@ public class GameState implements MapVisualisable, Initialisable{
         return fileData.toString();
     }
 	
-	private void showPosition(int position, String type)
-	{
-		String[] coordinates = fileLines1[position].split("\\s+");	
-		int x = Integer.parseInt(coordinates[1]);
-		int y = Integer.parseInt(coordinates[2]);
-		Coordinate xy = new Coordinate(x, y);
-		xy.type = type;
-		Test.printf("\n" + "X co-ordinate" + xy.x);
-		Test.printf("\n" + "Y co-ordinate" + xy.y); 
-		Coordinate scaledxy = scaleCoordinates(xy);
-		Test.printf("\n" + "Adjusted X co-ordinate" + scaledxy.x);
-		Test.printf("\n" + "Adjusted Y co-ordinate" + scaledxy.y); 
-		//need to display scaled stuff on screen
-		//made a coordinate class so that i can also store the type of player which you will need when displaying the players on the screen
-		
-	}
-	
 	public String readFile(String filepath)
 	{
 	   String content = null;
@@ -169,6 +119,48 @@ public class GameState implements MapVisualisable, Initialisable{
 	       e.printStackTrace();
 	   }
 	   return content;
+	}
+
+	@Override
+	public Integer getLocationX(Integer nodeId) {
+		String[] coordinates = fileLines1[nodeId].split("\\s+");	
+		return Integer.parseInt(coordinates[1]);
+	}
+
+	@Override
+	public Integer getLocationY(Integer nodeId) {
+		String[] coordinates = fileLines1[nodeId].split("\\s+");	
+		return Integer.parseInt(coordinates[2]);
+	}
+
+	@Override
+	public List<Integer> getDetectiveIdList() {
+		return detectiveIdList;
+	}
+
+	@Override
+	public List<Integer> getMrXIdList() {
+		return mrXIdList;
+	}
+
+	@Override
+	public Integer getNodeId(Integer playerId) {
+		Integer Position = null;
+		for(Detective a : listDetectives)
+		{
+			if(a.ID.equals(playerId))
+			{
+				Position = a.Position;
+			}
+		}
+		for(MrX a : listMrX)
+		{
+			if(a.ID.equals(playerId))
+			{
+				Position =  a.Position;
+			}
+		}
+		return Position;
 	}
 	
 }

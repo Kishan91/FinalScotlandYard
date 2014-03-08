@@ -28,12 +28,6 @@ public class Detective extends Player {
 	}
 
 	@Override
-	public int getPosition() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
 	public ArrayList<ArrayList<GameState.TicketType>> getTransport() {
 		// TODO Auto-generated method stub
 		ArrayList<ArrayList<GameState.TicketType>> tickets = new ArrayList<ArrayList<GameState.TicketType>>();

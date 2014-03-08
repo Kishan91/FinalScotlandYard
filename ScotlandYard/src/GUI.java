@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.net.*;
+import java.util.ArrayList;
 import java.awt.image.*;
 import javax.imageio.*;
 
@@ -11,11 +12,28 @@ public class GUI extends GameVisualiser {
 	private Dimension buffDimension;
 	public double ratio;
 
+	private class Coordinate
+	{
+		int x;
+		int y;
+		
+		public Coordinate(int xvalue, int yvalue)
+		{
+			x = xvalue;
+			y = yvalue;
+		}
+	}
+	
+	enum playerType 
+	{
+		Detective, MrX
+	}
+	
 	private double imageScale()
 	{
 		double height = buffDimension.getHeight();
 		double height2 = desDimension.getHeight();
-		ratio = height/height2;
+		ratio = height2/height;
 		return ratio;
 	}
 
@@ -39,7 +57,51 @@ public class GUI extends GameVisualiser {
 		JLabel background = createImage(a);
 		window.getContentPane().add(background);
 		window.pack();
-		imageScale();
+		ArrayList<Integer> mrXIdList = (ArrayList<Integer>) playerVisualisable.getMrXIdList();
+		ArrayList<Integer> detectiveIdList = (ArrayList<Integer>) playerVisualisable.getDetectiveIdList();
+		Integer node;
+		for(Integer b : mrXIdList)
+		{
+			node = playerVisualisable.getNodeId(b);	
+			drawNode(node, playerType.MrX);
+		}
+		for(Integer b : detectiveIdList)
+		{
+			node = playerVisualisable.getNodeId(b);
+			drawNode(node, playerType.Detective);
+		}
+	}
+	
+	private void drawNode(Integer node, playerType type)
+	{
+		Coordinate toDrawUnscaled = new Coordinate(playerVisualisable.getLocationX(node), playerVisualisable.getLocationY(node));
+		Test.printf("UNSCALED YEEEEE:");
+		Test.printf(type);
+		Test.printf("X coordinate" + toDrawUnscaled.x);
+		Test.printf("Y coordinate" + toDrawUnscaled.y);
+		Coordinate toDrawScaled = scaleCoordinate(toDrawUnscaled);
+		drawPlayer(toDrawScaled.x, toDrawScaled.y, type);
+	}
+	
+	private void drawPlayer(Integer X, Integer Y, playerType type)
+	{
+		Test.printf("SCALED YEEE:");
+		Test.printf(type);
+		Test.printf("X coordinate" + X);
+		Test.printf("Y coordinate" + Y);
+	}
+	
+	private Coordinate scaleCoordinate(Coordinate toDrawUnscaled)
+	{
+		double scale = imageScale();
+		double height = toDrawUnscaled.y;
+		double width = toDrawUnscaled.x;
+		// scale is a decimalised percentage 
+		double adjWidth = width*scale;
+		double ratio = width/height;
+		double adjHeight = adjWidth/ratio;
+		Coordinate toDrawScaled = new Coordinate((int)adjWidth,(int)adjHeight);
+		return toDrawScaled;
 	}
 
 	private JLabel createImage(Dimension a)
