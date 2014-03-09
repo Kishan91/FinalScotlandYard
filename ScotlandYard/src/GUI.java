@@ -3,6 +3,8 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import javax.imageio.*;
@@ -14,6 +16,8 @@ public class GUI extends GameVisualiser {
 	private Dimension buffDimension;
 	public double ratio;
 	JFrame window;
+	JLayeredPane layeredPane;
+	JLabel background;
 
 	private class Coordinate
 	{
@@ -42,7 +46,35 @@ public class GUI extends GameVisualiser {
 
 	public void run()
 	{
-		JLayeredPane layeredPane = new JLayeredPane();
+		displayMap();
+		newGameButton();
+	}
+	
+	private void newGameButton()
+	{		
+		JButton newGame = new JButton("New Game");
+		Coordinate newGameXY = scaleCoordinate(new Coordinate(1100, 30));
+		newGame.setLocation(newGameXY.x, newGameXY.y);
+		Coordinate newGameSize = scaleCoordinate(new Coordinate(150, 30));
+		newGame.setSize(newGameSize.x, newGameSize.y);
+		layeredPane.add(newGame, 2);
+		layeredPane.moveToBack(background);	
+		newGame.addActionListener(new ActionListener() {
+	         public void actionPerformed(ActionEvent e) {
+	        	 Component[] listComponents = layeredPane.getComponentsInLayer(1);
+	        	 initialisable.initialiseGame(3);
+	        	 for(Component b : listComponents)
+	        	 {
+	        		 Test.printf("LOOP");
+	        		 layeredPane.remove(layeredPane.getIndexOf(b));
+	        	 }
+	        	 displayPlayers();
+	         }          
+		});
+	}
+	
+	private void displayMap()
+	{
 		window = new JFrame("Scotland Yard");
 		window.setTitle("Scotland Yard");
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -56,15 +88,23 @@ public class GUI extends GameVisualiser {
 		Dimension a = new Dimension(screenWidth,screenHeight);
 		
 		window.setPreferredSize(a);
-		layeredPane.setPreferredSize(a);
+		
 		window.setResizable(false);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		
+		layeredPane = new JLayeredPane();
+		layeredPane.setPreferredSize(a);
 		window.add(layeredPane);
-		JLabel background = createImage(a);
+		background = createImage(a);
 		layeredPane.add(background, 0);
+		displayPlayers();
+		window.setVisible(true);
+		window.pack();
+	}
 	
+	
+	private void displayPlayers()
+	{
 		ArrayList<Integer> mrXIdList = (ArrayList<Integer>) playerVisualisable.getMrXIdList();
 		ArrayList<Integer> detectiveIdList = (ArrayList<Integer>) playerVisualisable.getDetectiveIdList();
 		Integer node;
@@ -76,6 +116,7 @@ public class GUI extends GameVisualiser {
 			JLabel MrX = drawNode(node, playerType.MrX, scaleFactor);
 			MrX.setSize(30,30);
 			layeredPane.add(MrX, 1);
+			layeredPane.setLayer(MrX, 1);
 			
 		}
 		for(Integer b : detectiveIdList)
@@ -85,11 +126,9 @@ public class GUI extends GameVisualiser {
 			JLabel Detective = drawNode(node, playerType.Detective, scaleFactor);
 			Detective.setSize(30,30);
 			layeredPane.add(Detective, 1);
+			layeredPane.setLayer(Detective, 1);
 		}
-			layeredPane.moveToBack(background);
-	
-		window.setVisible(true);
-		window.pack();
+		
 	}
 	
 	private JLabel drawNode(Integer node, playerType type, double scaleFactor)

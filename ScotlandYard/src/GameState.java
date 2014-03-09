@@ -11,7 +11,7 @@ import java.util.Random;
  * Class that will hold the state of the game. This is the class that will need
  * to implement the interfaces that we have provided you with
  */
-public class GameState implements MapVisualisable, Initialisable, PlayerVisualisable{
+public class GameState implements MapVisualisable, Initialisable, PlayerVisualisable, Visualisable{
 	
 	
 	
@@ -161,6 +161,48 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 			}
 		}
 		return Position;
+	}
+
+
+	@Override
+	public Integer getNumberOfTickets(TicketType type, Integer playerId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<TicketType> getMoveList(Integer playerId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Boolean isVisible(Integer playerId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Boolean isGameOver() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Integer getNextPlayerToMove() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Integer getWinningPlayerId() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }
