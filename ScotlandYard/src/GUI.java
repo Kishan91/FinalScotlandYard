@@ -65,7 +65,6 @@ public class GUI extends GameVisualiser {
 	        	 initialisable.initialiseGame(3);
 	        	 for(Component b : listComponents)
 	        	 {
-	        		 Test.printf("LOOP");
 	        		 layeredPane.remove(layeredPane.getIndexOf(b));
 	        	 }
 	        	 displayPlayers();

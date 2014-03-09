@@ -1,4 +1,3 @@
-import java.awt.Dimension;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -22,6 +21,8 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
     String[] fileLines1;
     ArrayList<Integer> mrXIdList;
     ArrayList<Integer> detectiveIdList;
+    int currentPlayerID = mrXIdList.get(0);
+    int currentTurn = 1;
     
 	/**
 	 * Variable that will hold the filename for the map
@@ -166,22 +167,63 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 
 	@Override
 	public Integer getNumberOfTickets(TicketType type, Integer playerId) {
-		// TODO Auto-generated method stub
-		return null;
+		int size = -1;
+		for(MrX a : listMrX)
+		{
+			if(a.ID.equals(playerId))
+			{
+				if(type.equals(TicketType.Bus)) size = a.bus.size();
+				else if(type.equals(TicketType.Taxi)) size = a.taxi.size();
+				else if(type.equals(TicketType.Underground)) size = a.tube.size();
+			}
+		}
+		for(Detective a : listDetectives)
+		{
+			if(a.ID.equals(playerId))
+			{
+				if(type.equals(TicketType.Bus)) size = a.bus.size();
+				else if(type.equals(TicketType.Taxi)) size = a.taxi.size();
+				else if(type.equals(TicketType.Underground)) size = a.tube.size();
+				else if(type.equals(TicketType.DoubleMove)) size = a.Sdouble.size();
+				else if(type.equals(TicketType.SecretMove)) size = a.Ssecret.size();
+			}
+		}
+		return size;
 	}
 
 
 	@Override
 	public List<TicketType> getMoveList(Integer playerId) {
-		// TODO Auto-generated method stub
-		return null;
+		List<TicketType> usedMoves = null;
+		for(MrX a : listMrX)
+		{
+			if(a.ID.equals(playerId))
+			{
+				usedMoves =  a.used;
+			}
+		}
+		for(Detective a : listDetectives)
+		{
+			if(a.ID.equals(playerId))
+			{
+				usedMoves = a.used;
+			}
+		}
+		return usedMoves;
 	}
 
 
 	@Override
 	public Boolean isVisible(Integer playerId) {
-		// TODO Auto-generated method stub
-		return null;
+		boolean visible = false;
+		if (detectiveIdList.contains(playerId)) visible = true;
+		else {
+			for(MrX a : listMrX)
+			{
+				if(a.ID.equals(playerId)) visible =  a.isVisible();
+			}
+		}
+		return visible;
 	}
 
 
@@ -194,8 +236,25 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 
 	@Override
 	public Integer getNextPlayerToMove() {
-		// TODO Auto-generated method stub
-		return null;
+		Integer nextPlayer;
+		if (mrXIdList.contains(currentPlayerID))
+		{
+			if(mrXIdList.get(mrXIdList.size()-1) == currentPlayerID)
+			{
+				nextPlayer = detectiveIdList.get(0);
+			}
+			else {
+				nextPlayer = currentPlayerID + 1;
+			}
+		} else {
+			if(detectiveIdList.get(detectiveIdList.size() - 1) == currentPlayerID)
+			{
+				nextPlayer = mrXIdList.get(0);
+			} else {
+				nextPlayer = currentPlayerID + 1;
+			}
+		}
+		return nextPlayer;
 	}
 
 
