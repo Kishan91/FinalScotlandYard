@@ -1,7 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
+import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import javax.imageio.*;
 
@@ -11,6 +13,7 @@ public class GUI extends GameVisualiser {
 	private Dimension desDimension;
 	private Dimension buffDimension;
 	public double ratio;
+	JFrame window;
 
 	private class Coordinate
 	{
@@ -39,7 +42,8 @@ public class GUI extends GameVisualiser {
 
 	public void run()
 	{
-		JFrame window = new JFrame("Scotland Yard");
+		JLayeredPane layeredPane = new JLayeredPane();
+		window = new JFrame("Scotland Yard");
 		window.setTitle("Scotland Yard");
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(window.getGraphicsConfiguration());
@@ -50,45 +54,102 @@ public class GUI extends GameVisualiser {
 		int screenWidth = (int) screenSize.getWidth() - left - right - window.getWidth();
 		int screenHeight = (int) screenSize.getHeight() - bottom - top - window.getHeight();
 		Dimension a = new Dimension(screenWidth,screenHeight);
+		
 		window.setPreferredSize(a);
-		window.setVisible(true);
+		layeredPane.setPreferredSize(a);
 		window.setResizable(false);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		
+		window.add(layeredPane);
 		JLabel background = createImage(a);
-		window.getContentPane().add(background);
-		window.pack();
+		layeredPane.add(background, 0);
+	
 		ArrayList<Integer> mrXIdList = (ArrayList<Integer>) playerVisualisable.getMrXIdList();
 		ArrayList<Integer> detectiveIdList = (ArrayList<Integer>) playerVisualisable.getDetectiveIdList();
 		Integer node;
+		double scaleFactor = imageScale();
 		for(Integer b : mrXIdList)
 		{
-			node = playerVisualisable.getNodeId(b);	
-			drawNode(node, playerType.MrX);
+			node = playerVisualisable.getNodeId(b);
+			Test.printf("MR X LOCATION" + node);
+			JLabel MrX = drawNode(node, playerType.MrX, scaleFactor);
+			MrX.setSize(30,30);
+			layeredPane.add(MrX, 1);
+			
 		}
 		for(Integer b : detectiveIdList)
 		{
 			node = playerVisualisable.getNodeId(b);
-			drawNode(node, playerType.Detective);
+			Test.printf("Detective LOCATION" + node);
+			JLabel Detective = drawNode(node, playerType.Detective, scaleFactor);
+			Detective.setSize(30,30);
+			layeredPane.add(Detective, 1);
 		}
+			layeredPane.moveToBack(background);
+	
+		window.setVisible(true);
+		window.pack();
 	}
 	
-	private void drawNode(Integer node, playerType type)
+	private JLabel drawNode(Integer node, playerType type, double scaleFactor)
 	{
 		Coordinate toDrawUnscaled = new Coordinate(playerVisualisable.getLocationX(node), playerVisualisable.getLocationY(node));
-		Test.printf("UNSCALED YEEEEE:");
-		Test.printf(type);
-		Test.printf("X coordinate" + toDrawUnscaled.x);
-		Test.printf("Y coordinate" + toDrawUnscaled.y);
 		Coordinate toDrawScaled = scaleCoordinate(toDrawUnscaled);
-		drawPlayer(toDrawScaled.x, toDrawScaled.y, type);
+		JLabel toDraw = drawPlayer(toDrawScaled.x, toDrawScaled.y, type, scaleFactor);
+		return toDraw;
 	}
 	
-	private void drawPlayer(Integer X, Integer Y, playerType type)
+	private BufferedImage scale(BufferedImage previous, int imageType, int size, double scaleFactor) {
+	    BufferedImage scaledImage = null;
+	    if(previous != null) {
+	        scaledImage = new BufferedImage(size, size, imageType);
+	        Graphics2D g2D = scaledImage.createGraphics();
+	        AffineTransform at = AffineTransform.getScaleInstance(scaleFactor, scaleFactor);
+	        g2D.drawRenderedImage(previous, at);
+	    }
+	    return scaledImage;
+	}
+	
+	private JLabel drawPlayer(Integer X, Integer Y, playerType type, double scaleFactor)
 	{
-		Test.printf("SCALED YEEE:");
-		Test.printf(type);
-		Test.printf("X coordinate" + X);
-		Test.printf("Y coordinate" + Y);
+		
+		int size = (int) (30 * scaleFactor);
+		if(type == playerType.MrX)
+		{
+			URL mrX = this.getClass().getResource("MrX.jpg");
+			ImageIcon mrXImage = null;
+			BufferedImage mrXBuffered = null;
+
+			try {
+				mrXBuffered = ImageIO.read(mrX);
+				mrXBuffered = scale(mrXBuffered, BufferedImage.TYPE_INT_RGB, size, scaleFactor);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+				mrXImage = new ImageIcon(mrXBuffered);
+			JLabel mrXLabel = new JLabel(mrXImage);
+			mrXLabel.setLocation(X - 15, Y - 15);
+			return mrXLabel;
+			
+		} else {
+			URL detective = this.getClass().getResource("Detective.jpg");
+			ImageIcon detectiveImage = null;
+			BufferedImage detectiveBuffered = null;
+			try {
+				detectiveBuffered = ImageIO.read(detective);
+				detectiveBuffered = scale(detectiveBuffered, BufferedImage.TYPE_INT_RGB, size, scaleFactor);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			detectiveImage = new ImageIcon(detectiveBuffered);
+			JLabel detectiveLabel = new JLabel(detectiveImage);
+			detectiveLabel.setLocation(X - 15, Y - 15);
+			return detectiveLabel;
+		}
+	
 	}
 	
 	private Coordinate scaleCoordinate(Coordinate toDrawUnscaled)
@@ -122,6 +183,7 @@ public class GUI extends GameVisualiser {
 		desDimension = aspectRatio(buffDimension,desDimension);
 		BufferedImage resized = resize(buffered, desDimension);
 		JLabel background  = new JLabel(new ImageIcon(resized));
+		background.setSize(resized.getWidth(), resized.getHeight());
 		return background;
 	}
 
