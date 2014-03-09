@@ -21,7 +21,7 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
     String[] fileLines1;
     ArrayList<Integer> mrXIdList;
     ArrayList<Integer> detectiveIdList;
-    int currentPlayerID = mrXIdList.get(0);
+    int currentPlayerID;
     int currentTurn = 1;
     
 	/**
@@ -82,6 +82,7 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 		mrX.ID = i;
 		listMrX.add(mrX);
 		mrXIdList.add(i);
+		currentPlayerID = mrXIdList.get(0);
 		return null;
 	}
 	
