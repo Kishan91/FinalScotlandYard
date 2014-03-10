@@ -49,7 +49,15 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 		detectiveIdList = new ArrayList<Integer>();
 		ArrayList<Integer> idxArray = new ArrayList<Integer>(numberOfDetectives);
 		int i;
-		for(i = 0; i < numberOfDetectives; i++)
+		
+		MrX mrX = new MrX();
+		int idxX = new Random().nextInt(MrXstartPos.length);
+		mrX.setPosition(MrXstartPos[idxX]);
+		mrX.ID = 0;
+		listMrX.add(mrX);
+		mrXIdList.add(0);
+		
+		for(i = 1; i <= numberOfDetectives; i++)
 		{
 			idxD = -1;
 			Detective temp = null;
@@ -76,12 +84,7 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 			e.printStackTrace();
 		}
 		
-		MrX mrX = new MrX();
-		int idxX = new Random().nextInt(MrXstartPos.length);
-		mrX.setPosition(MrXstartPos[idxX]);
-		mrX.ID = i;
-		listMrX.add(mrX);
-		mrXIdList.add(i);
+		
 		currentPlayerID = mrXIdList.get(0);
 		return null;
 	}
@@ -176,6 +179,8 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 				if(type.equals(TicketType.Bus)) size = a.bus.size();
 				else if(type.equals(TicketType.Taxi)) size = a.taxi.size();
 				else if(type.equals(TicketType.Underground)) size = a.tube.size();
+				else if(type.equals(TicketType.DoubleMove)) size = a.Sdouble.size();
+				else if(type.equals(TicketType.SecretMove)) size = a.Ssecret.size();
 			}
 		}
 		for(Detective a : listDetectives)
@@ -185,8 +190,7 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 				if(type.equals(TicketType.Bus)) size = a.bus.size();
 				else if(type.equals(TicketType.Taxi)) size = a.taxi.size();
 				else if(type.equals(TicketType.Underground)) size = a.tube.size();
-				else if(type.equals(TicketType.DoubleMove)) size = a.Sdouble.size();
-				else if(type.equals(TicketType.SecretMove)) size = a.Ssecret.size();
+
 			}
 		}
 		return size;

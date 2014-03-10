@@ -15,6 +15,7 @@ public class Game {
 		gui.registerMapVisualisable(state);
 		gui.registerPlayerVisualisable(state);
 		gui.registerInitialisable(state);
+		gui.registerVisualisable(state);
 		state.initialiseGame(3);
 		gui.run();
 	}
