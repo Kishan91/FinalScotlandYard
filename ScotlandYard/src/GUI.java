@@ -186,6 +186,7 @@ public class GUI extends GameVisualiser {
 		moveLog.add("Mr X Move Log", movesUsed);
 		moveLog.setVisible(true);
 		layeredPane.add(moveLog);
+		layeredPane.setLayer(moveLog, 1);
 	}
 	
 	private void mrXLabel()
@@ -202,26 +203,30 @@ public class GUI extends GameVisualiser {
 		JLabel noTubeTickets = new JLabel("Number of tube tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.Underground, 0));
 		JLabel noSdoubleTickets = new JLabel("Number of double move tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.DoubleMove, 0));
 		JLabel noSpecialTickets = new JLabel("Number of special tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.SecretMove, 0));
+		JLabel playerPosition = new JLabel("Player position: " + visualisable.getNodeId(0));
 		//noBusTickets.setBounds((int) (desDimension.getWidth() + 30), 90, 0, 40);
-		noBusTickets.setLocation(0, 40);
+		noBusTickets.setLocation(0, 10);
 		//noTaxiTickets.setBounds((int) (desDimension.getWidth() + 30), 90, 0, 70);
-		noTaxiTickets.setLocation(0, 70);
+		noTaxiTickets.setLocation(0, 40);
 		//noTubeTickets.setBounds((int) (desDimension.getWidth() + 30), 90, 0, 100);
-		noTubeTickets.setLocation(0, 100);
+		noTubeTickets.setLocation(0, 70);
 		//noSdoubleTickets.setBounds((int) (desDimension.getWidth() + 30), 90, 0, 130);
-		noSdoubleTickets.setLocation(0, 130);
+		noSdoubleTickets.setLocation(0, 100);
 		//noSpecialTickets.setBounds((int) (desDimension.getWidth() + 30), 90, 0, 160);
-		noSpecialTickets.setLocation(0, 160);
+		noSpecialTickets.setLocation(0, 130);
+		playerPosition.setLocation(0, 160);
 		noBusTickets.setSize(400, 20);
 		noTaxiTickets.setSize(400, 20);
 		noTubeTickets.setSize(400, 20);
-		noSdoubleTickets.setLocation(400, 20);
-		noSpecialTickets.setLocation(400, 20);
+		noSdoubleTickets.setSize(400, 20);
+		noSpecialTickets.setSize(400, 20);
+		playerPosition.setSize(400, 20);
 		mrX.add(noBusTickets);
 		mrX.add(noTaxiTickets);
 		mrX.add(noTubeTickets);
 		mrX.add(noSdoubleTickets);
 		mrX.add(noSpecialTickets);
+		mrX.add(playerPosition);
 		mrX.setVisible(true);
 		tabbedPane.add("Mr X", mrX);
 		
@@ -238,24 +243,30 @@ public class GUI extends GameVisualiser {
 			JLabel noBusTickets = new JLabel("Number of bus tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.Bus, i));
 			JLabel noTaxiTickets = new JLabel("Number of taxi tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.Taxi, i));
 			JLabel noTubeTickets = new JLabel("Number of tube tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.Underground, i));
+			JLabel playerPosition = new JLabel("Player position: " + visualisable.getNodeId(i));
 			//noBusTickets.setBounds((int) (desDimension.getWidth() + 30), 90, 0, 40);
-			noBusTickets.setLocation(0, 40);
+			noBusTickets.setLocation(0, 10);
 			//noTaxiTickets.setBounds((int) (desDimension.getWidth() + 30), 90, 0, 70);
-			noTaxiTickets.setLocation(0, 70);
+			noTaxiTickets.setLocation(0, 40);
 			//noTubeTickets.setBounds((int) (desDimension.getWidth() + 30), 90, 0, 100);
-			noTubeTickets.setLocation(0, 100);
+			noTubeTickets.setLocation(0, 70);
+			playerPosition.setLocation(0, 100);
 			noBusTickets.setSize(400, 20);
 			noTaxiTickets.setSize(400, 20);
 			noTubeTickets.setSize(400, 20);
+			playerPosition.setSize(400, 20);
 			detective1.add(noBusTickets);
 			detective1.add(noTaxiTickets);
 			detective1.add(noTubeTickets);
+			detective1.add(playerPosition);
 			detective1.setVisible(true);
 			tabbedPane.add("Detective " + String.valueOf(i), detective1);
 		}
 				
 			tabbedPane.setVisible(true);
 			layeredPane.add(tabbedPane);
+			layeredPane.setLayer(tabbedPane, 1);
+			
 	}
 	
 	
@@ -297,7 +308,6 @@ public class GUI extends GameVisualiser {
 		for(Integer b : mrXIdList)
 		{
 			node = playerVisualisable.getNodeId(b);
-			Test.printf("MR X LOCATION" + node);
 			JLabel MrX = drawNode(node, playerType.MrX);
 			MrX.setSize(30,30);
 			layeredPane.add(MrX, i);
@@ -308,7 +318,6 @@ public class GUI extends GameVisualiser {
 		for(Integer b : detectiveIdList)
 		{
 			node = playerVisualisable.getNodeId(b);
-			Test.printf("Detective LOCATION" + node);
 			JLabel Detective = drawNode(node, playerType.Detective);
 			Detective.setSize(30,30);
 			layeredPane.add(Detective, i);
