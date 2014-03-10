@@ -57,24 +57,10 @@ public class GUI extends GameVisualiser {
 		newGameButton();
 		loadGameButton();
 		saveGameButton();
-		mrXLog();
+		
 	}
 	
-	private void mrXLog()
-	{
-		JButton mrXLog = new JButton("Mr X Move Log");
-		//Coordinate newGameXY = scaleCoordinate(new Coordinate(1100, 30));
-		mrXLog.setLocation((int) (desDimension.getWidth() + 440), 30);
-		//Coordinate newGameSize = scaleCoordinate(new Coordinate(150, 30));
-		mrXLog.setSize(130, 30);
-		layeredPane.add(mrXLog);
-		//layeredPane.moveToBack(background);	
-		mrXLog.addActionListener(new ActionListener() {
-	         public void actionPerformed(ActionEvent e) {
-	        	 
-	         }          
-		});	
-	}
+
 	
 	private void newGameButton()
 	{		
@@ -174,15 +160,43 @@ public class GUI extends GameVisualiser {
 		layeredPane.setLayer(nextPlayerLabel, 1);
 	}
 	
+	private void mrXMoveLog()
+	{
+		JTabbedPane moveLog = new JTabbedPane();
+		moveLog.setLocation((int) (desDimension.getWidth() + 10), 490);
+		moveLog.setSize(430, 300);
+		JPanel movesUsed = new JPanel();
+		movesUsed.setLayout(null);
+		movesUsed.setSize(600, 300);
+		ArrayList<Initialisable.TicketType> usedMoves = (ArrayList<Initialisable.TicketType>) visualisable.getMoveList(0);
+		for(int i = 0; i < usedMoves.size(); i++)
+		{
+			String type = null;
+			if(usedMoves.get(i) == Initialisable.TicketType.Bus) type = "Bus";
+			else if (usedMoves.get(i) == Initialisable.TicketType.Taxi) type = "Taxi";
+			else if (usedMoves.get(i) == Initialisable.TicketType.Underground) type = "Underground";
+			else if (usedMoves.get(i) == Initialisable.TicketType.DoubleMove) type = "Double move";
+			else if (usedMoves.get(i) == Initialisable.TicketType.SecretMove) type = "Secret move";
+			JLabel move = new JLabel("Move " + String.valueOf(i + 1) + ": " + type);
+			move.setLocation(0, 40 + (30 * i));
+			move.setSize(400, 20);
+			movesUsed.add(move);
+		}
+		movesUsed.setVisible(true);
+		moveLog.add("Mr X Move Log", movesUsed);
+		moveLog.setVisible(true);
+		layeredPane.add(moveLog);
+	}
+	
 	private void mrXLabel()
 	{
 		tabbedPane = new JTabbedPane();
-		tabbedPane.setLocation((int) (desDimension.getWidth() + 30), 90);
-		tabbedPane.setSize(540, 300);
+		tabbedPane.setLocation((int) (desDimension.getWidth() + 10), 90);
+		tabbedPane.setSize(430, 400);
 		
 		JPanel mrX = new JPanel();
 		mrX.setLayout(null);
-		mrX.setSize(600, 300);
+		mrX.setSize(430, 300);
 		JLabel noBusTickets = new JLabel("Number of bus tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.Bus, 0));
 		JLabel noTaxiTickets = new JLabel("Number of taxi tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.Taxi, 0));
 		JLabel noTubeTickets = new JLabel("Number of tube tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.Underground, 0));
@@ -220,7 +234,7 @@ public class GUI extends GameVisualiser {
 		{
 			JPanel detective1 = new JPanel();
 			detective1.setLayout(null);
-			detective1.setSize(600, 300);
+			detective1.setSize(430, 300);
 			JLabel noBusTickets = new JLabel("Number of bus tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.Bus, i));
 			JLabel noTaxiTickets = new JLabel("Number of taxi tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.Taxi, i));
 			JLabel noTubeTickets = new JLabel("Number of tube tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.Underground, i));
@@ -305,6 +319,7 @@ public class GUI extends GameVisualiser {
 		nextPlayerLabel();
 		mrXLabel();
 		detectiveLabels();
+		mrXMoveLog();
 		
 	}
 	
