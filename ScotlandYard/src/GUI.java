@@ -14,15 +14,13 @@ import javax.imageio.*;
 
 public class GUI extends GameVisualiser {
 	
-	private Dimension desDimension;
-	private Dimension buffDimension;
-	public double ratio;
-	JFrame window;
-	JLayeredPane layeredPane;
-	JLabel background;
-	Dimension newSize;
-	int currentPlayerID = 0;
-	JTabbedPane tabbedPane;
+	private Dimension resizedImageDimensions;
+	private Dimension oldImageDimensions;
+	private double ratio;
+	private JFrame window;
+	private JLayeredPane layeredPane;
+	private int currentPlayerID = 0;
+	private JTabbedPane tabbedPane;
 	
 	private class Coordinate
 	{
@@ -44,31 +42,31 @@ public class GUI extends GameVisualiser {
 	
 	private double imageScale()
 	{
-		double height = buffDimension.getHeight();
-		double height2 = desDimension.getHeight();
-		ratio = height2/height;
+		double oldHeight = oldImageDimensions.getHeight();
+		double newHeight = resizedImageDimensions.getHeight();
+		ratio = newHeight/oldHeight;
 		return ratio;
 	}
-	
 
 	public void run()
 	{
 		displayMap();
+		displayButtons();
+	}
+	
+	private void displayButtons()
+	{
 		newGameButton();
 		loadGameButton();
 		saveGameButton();
-		
 	}
-	
 
-	
 	private void newGameButton()
 	{		
 		BufferedImage img = null;
 		try {
-			img = ImageIO.read(this.getClass().getResource("test.jpg"));
+			img = ImageIO.read(this.getClass().getResource("new.jpg"));
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		img = resize(img, new Dimension(130, 30));
@@ -77,12 +75,9 @@ public class GUI extends GameVisualiser {
 		newGame.setContentAreaFilled(false);
 		newGame.setBorderPainted(false);
 		newGame.setFocusPainted(false);
-		//Coordinate newGameXY = scaleCoordinate(new Coordinate(1100, 30));
-		newGame.setLocation((int) (desDimension.getWidth() + 20), 30);
-		//Coordinate newGameSize = scaleCoordinate(new Coordinate(150, 30));
+		newGame.setLocation((int) (resizedImageDimensions.getWidth() + 20), 30);
 		newGame.setSize(130, 30);
 		layeredPane.add(newGame, 0);
-		//layeredPane.moveToBack(background);	
 		newGame.addActionListener(new ActionListener() {
 	         public void actionPerformed(ActionEvent e) {
 	        	 Component[] listComponents = layeredPane.getComponentsInLayer(1);
@@ -91,7 +86,6 @@ public class GUI extends GameVisualiser {
 	        	 {
 	        		 layeredPane.remove(b);
 	        		 layeredPane.repaint();
-
 	        	 }
 	        	 displayPlayers();
 	         }          
@@ -100,13 +94,17 @@ public class GUI extends GameVisualiser {
 	
 	private void loadGameButton()
 	{		
-		JButton loadGame = new JButton("Load Game");
-		//Coordinate newGameXY = scaleCoordinate(new Coordinate(1100, 30));
-		loadGame.setLocation((int) (desDimension.getWidth() + 160), 30);
-		//Coordinate newGameSize = scaleCoordinate(new Coordinate(150, 30));
+		BufferedImage img = null;
+		try {
+			img = ImageIO.read(this.getClass().getResource("load.jpg"));
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		img = resize(img, new Dimension(130, 30));
+		JButton loadGame = new JButton(new ImageIcon(img));
+		loadGame.setLocation((int) (resizedImageDimensions.getWidth() + 160), 30);
 		loadGame.setSize(130, 30);
 		layeredPane.add(loadGame, 0);
-		//layeredPane.moveToBack(background);	
 		loadGame.addActionListener(new ActionListener() {
 	         public void actionPerformed(ActionEvent e) {
 	        
@@ -116,13 +114,17 @@ public class GUI extends GameVisualiser {
 	
 	private void saveGameButton()
 	{		
-		JButton saveGame = new JButton("Save Game");
-		//Coordinate newGameXY = scaleCoordinate(new Coordinate(1100, 30));
-		saveGame.setLocation((int) (desDimension.getWidth() + 300), 30);
-		//Coordinate newGameSize = scaleCoordinate(new Coordinate(150, 30));
+		BufferedImage img = null;
+		try {
+			img = ImageIO.read(this.getClass().getResource("save.jpg"));
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		img = resize(img, new Dimension(130, 30));
+		JButton saveGame = new JButton(new ImageIcon(img));
+		saveGame.setLocation((int) (resizedImageDimensions.getWidth() + 300), 30);
 		saveGame.setSize(130, 30);
 		layeredPane.add(saveGame, 0);
-		//layeredPane.moveToBack(background);	
 		saveGame.addActionListener(new ActionListener() {
 	         public void actionPerformed(ActionEvent e) {
 	        	 
@@ -135,14 +137,13 @@ public class GUI extends GameVisualiser {
 		JLabel currentPlayerLabel ;
 		if(currentPlayerID == 0) currentPlayerLabel = new JLabel("Current Player: " + "Mr X");
 		else currentPlayerLabel = new JLabel("Current Player: " + "Detective - " + currentPlayerID);		
-		currentPlayerLabel.setLocation((int) (desDimension.getWidth() * 0.05), (int) (desDimension.getHeight() + 60));
+		currentPlayerLabel.setLocation((int) (resizedImageDimensions.getWidth() * 0.05), (int) (resizedImageDimensions.getHeight() + 60));
 		currentPlayerLabel.setSize(340,60);
 		Border border = BorderFactory.createLineBorder(Color.BLUE, 5);
 		currentPlayerLabel.setBorder(border);
 		currentPlayerLabel.setFont(new Font("Impact", Font.PLAIN, 40));
 		layeredPane.add(currentPlayerLabel, 1);
 		layeredPane.setLayer(currentPlayerLabel, 1);
-		
 	}
 	
 	private void nextPlayerLabel()
@@ -151,7 +152,7 @@ public class GUI extends GameVisualiser {
 		if(visualisable.getNextPlayerToMove() == 0) type = "Mr X ";
 		else type = "Detective ";
 		JLabel nextPlayerLabel = new JLabel("Next Player: " + type + visualisable.getNextPlayerToMove());
-		nextPlayerLabel.setLocation((int) (desDimension.getWidth() * 0.5), (int) (desDimension.getHeight() + 60));
+		nextPlayerLabel.setLocation((int) (resizedImageDimensions.getWidth() * 0.5), (int) (resizedImageDimensions.getHeight() + 60));
 		nextPlayerLabel.setSize(390,60);
 		Border border = BorderFactory.createLineBorder(Color.RED, 5);
 		nextPlayerLabel.setBorder(border);
@@ -163,7 +164,7 @@ public class GUI extends GameVisualiser {
 	private void mrXMoveLog()
 	{
 		JTabbedPane moveLog = new JTabbedPane();
-		moveLog.setLocation((int) (desDimension.getWidth() + 10), 490);
+		moveLog.setLocation((int) (resizedImageDimensions.getWidth() + 10), 490);
 		moveLog.setSize(430, 300);
 		JPanel movesUsed = new JPanel();
 		movesUsed.setLayout(null);
@@ -189,53 +190,51 @@ public class GUI extends GameVisualiser {
 		layeredPane.setLayer(moveLog, 1);
 	}
 	
-	private void mrXLabel()
+	private int mrXLabel()
 	{
 		tabbedPane = new JTabbedPane();
-		tabbedPane.setLocation((int) (desDimension.getWidth() + 10), 90);
+		tabbedPane.setLocation((int) (resizedImageDimensions.getWidth() + 10), 90);
 		tabbedPane.setSize(430, 400);
-		
-		JPanel mrX = new JPanel();
-		mrX.setLayout(null);
-		mrX.setSize(430, 300);
-		JLabel noBusTickets = new JLabel("Number of bus tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.Bus, 0));
-		JLabel noTaxiTickets = new JLabel("Number of taxi tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.Taxi, 0));
-		JLabel noTubeTickets = new JLabel("Number of tube tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.Underground, 0));
-		JLabel noSdoubleTickets = new JLabel("Number of double move tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.DoubleMove, 0));
-		JLabel noSpecialTickets = new JLabel("Number of special tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.SecretMove, 0));
-		JLabel playerPosition = new JLabel("Player position: " + visualisable.getNodeId(0));
-		//noBusTickets.setBounds((int) (desDimension.getWidth() + 30), 90, 0, 40);
-		noBusTickets.setLocation(0, 10);
-		//noTaxiTickets.setBounds((int) (desDimension.getWidth() + 30), 90, 0, 70);
-		noTaxiTickets.setLocation(0, 40);
-		//noTubeTickets.setBounds((int) (desDimension.getWidth() + 30), 90, 0, 100);
-		noTubeTickets.setLocation(0, 70);
-		//noSdoubleTickets.setBounds((int) (desDimension.getWidth() + 30), 90, 0, 130);
-		noSdoubleTickets.setLocation(0, 100);
-		//noSpecialTickets.setBounds((int) (desDimension.getWidth() + 30), 90, 0, 160);
-		noSpecialTickets.setLocation(0, 130);
-		playerPosition.setLocation(0, 160);
-		noBusTickets.setSize(400, 20);
-		noTaxiTickets.setSize(400, 20);
-		noTubeTickets.setSize(400, 20);
-		noSdoubleTickets.setSize(400, 20);
-		noSpecialTickets.setSize(400, 20);
-		playerPosition.setSize(400, 20);
-		mrX.add(noBusTickets);
-		mrX.add(noTaxiTickets);
-		mrX.add(noTubeTickets);
-		mrX.add(noSdoubleTickets);
-		mrX.add(noSpecialTickets);
-		mrX.add(playerPosition);
-		mrX.setVisible(true);
-		tabbedPane.add("Mr X", mrX);
-		
+		int i;
+		for(i = 0; i < playerVisualisable.getMrXIdList().size(); i++)
+		{
+			JPanel mrX = new JPanel();
+			mrX.setLayout(null);
+			mrX.setSize(430, 300);
+			JLabel noBusTickets = new JLabel("Number of bus tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.Bus, 0));
+			JLabel noTaxiTickets = new JLabel("Number of taxi tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.Taxi, 0));
+			JLabel noTubeTickets = new JLabel("Number of tube tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.Underground, 0));
+			JLabel noSdoubleTickets = new JLabel("Number of double move tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.DoubleMove, 0));
+			JLabel noSpecialTickets = new JLabel("Number of special tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.SecretMove, 0));
+			JLabel playerPosition = new JLabel("Player position: " + visualisable.getNodeId(0));
+			noBusTickets.setLocation(0, 10);
+			noTaxiTickets.setLocation(0, 40);
+			noTubeTickets.setLocation(0, 70);
+			noSdoubleTickets.setLocation(0, 100);
+			noSpecialTickets.setLocation(0, 130);
+			playerPosition.setLocation(0, 160);
+			noBusTickets.setSize(400, 20);
+			noTaxiTickets.setSize(400, 20);
+			noTubeTickets.setSize(400, 20);
+			noSdoubleTickets.setSize(400, 20);
+			noSpecialTickets.setSize(400, 20);
+			playerPosition.setSize(400, 20);
+			mrX.add(noBusTickets);
+			mrX.add(noTaxiTickets);
+			mrX.add(noTubeTickets);
+			mrX.add(noSdoubleTickets);
+			mrX.add(noSpecialTickets);
+			mrX.add(playerPosition);
+			mrX.setVisible(true);
+			tabbedPane.add("Mr X", mrX);
+		}
+		return i;
 	}
 	
-	private void detectiveLabels()
+	private void detectiveLabels(int index)
 	{
 		
-		for(int i = 1; i < 4; i++)
+		for(int i = index; i < playerVisualisable.getDetectiveIdList().size() + 1; i++)
 		{
 			JPanel detective1 = new JPanel();
 			detective1.setLayout(null);
@@ -244,11 +243,8 @@ public class GUI extends GameVisualiser {
 			JLabel noTaxiTickets = new JLabel("Number of taxi tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.Taxi, i));
 			JLabel noTubeTickets = new JLabel("Number of tube tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.Underground, i));
 			JLabel playerPosition = new JLabel("Player position: " + visualisable.getNodeId(i));
-			//noBusTickets.setBounds((int) (desDimension.getWidth() + 30), 90, 0, 40);
 			noBusTickets.setLocation(0, 10);
-			//noTaxiTickets.setBounds((int) (desDimension.getWidth() + 30), 90, 0, 70);
 			noTaxiTickets.setLocation(0, 40);
-			//noTubeTickets.setBounds((int) (desDimension.getWidth() + 30), 90, 0, 100);
 			noTubeTickets.setLocation(0, 70);
 			playerPosition.setLocation(0, 100);
 			noBusTickets.setSize(400, 20);
@@ -262,11 +258,9 @@ public class GUI extends GameVisualiser {
 			detective1.setVisible(true);
 			tabbedPane.add("Detective " + String.valueOf(i), detective1);
 		}
-				
 			tabbedPane.setVisible(true);
 			layeredPane.add(tabbedPane);
 			layeredPane.setLayer(tabbedPane, 1);
-			
 	}
 	
 	
@@ -283,14 +277,14 @@ public class GUI extends GameVisualiser {
 		int top = scnMax.top;
 		int screenWidth = (int) screenSize.getWidth() - left - right - window.getWidth();
 		int screenHeight = (int) screenSize.getHeight() - bottom - top - window.getHeight();
-		Dimension a = new Dimension(screenWidth,screenHeight);
-		window.setPreferredSize(a);
+		Dimension effectiveScreenRes = new Dimension(screenWidth,screenHeight);
+		window.setPreferredSize(effectiveScreenRes);
 		window.setResizable(false);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		layeredPane = new JLayeredPane();
-		layeredPane.setPreferredSize(a);
+		layeredPane.setPreferredSize(effectiveScreenRes);
 		window.add(layeredPane);
-		background = createImage(a);
+		JLabel background = createImage(effectiveScreenRes);
 		layeredPane.add(background, 0);
 		displayPlayers();
 		window.setVisible(true);
@@ -303,7 +297,6 @@ public class GUI extends GameVisualiser {
 		ArrayList<Integer> mrXIdList = (ArrayList<Integer>) playerVisualisable.getMrXIdList();
 		ArrayList<Integer> detectiveIdList = (ArrayList<Integer>) playerVisualisable.getDetectiveIdList();
 		Integer node;
-		//double scaleFactor = imageScale();
 		int i = 1;
 		for(Integer b : mrXIdList)
 		{
@@ -313,7 +306,6 @@ public class GUI extends GameVisualiser {
 			layeredPane.add(MrX, i);
 			layeredPane.setLayer(MrX, 1);
 			i++;
-			
 		}
 		for(Integer b : detectiveIdList)
 		{
@@ -326,10 +318,9 @@ public class GUI extends GameVisualiser {
 		}
 		currentPlayerLabel();
 		nextPlayerLabel();
-		mrXLabel();
-		detectiveLabels();
+		int index = mrXLabel();
+		detectiveLabels(index);
 		mrXMoveLog();
-		
 	}
 	
 	private JLabel drawNode(Integer node, playerType type)
@@ -355,19 +346,16 @@ public class GUI extends GameVisualiser {
 	
 	private JLabel drawPlayer(Integer X, Integer Y, playerType type)
 	{
-		
 		int size = (int) (30 * ratio);
 		if(type == playerType.MrX)
 		{
 			URL mrX = this.getClass().getResource("MrX.jpg");
 			ImageIcon mrXImage = null;
 			BufferedImage mrXBuffered = null;
-
 			try {
 				mrXBuffered = ImageIO.read(mrX);
 				mrXBuffered = scale(mrXBuffered, BufferedImage.TYPE_INT_RGB, size);
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 				mrXImage = new ImageIcon(mrXBuffered);
@@ -383,7 +371,6 @@ public class GUI extends GameVisualiser {
 				detectiveBuffered = ImageIO.read(detective);
 				detectiveBuffered = scale(detectiveBuffered, BufferedImage.TYPE_INT_RGB, size);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			detectiveImage = new ImageIcon(detectiveBuffered);
@@ -391,7 +378,6 @@ public class GUI extends GameVisualiser {
 			detectiveLabel.setLocation(X - 15, Y - 15);
 			return detectiveLabel;
 		}
-	
 	}
 	
 	
@@ -400,7 +386,6 @@ public class GUI extends GameVisualiser {
 		double scale = imageScale();
 		double height = toDrawUnscaled.y;
 		double width = toDrawUnscaled.x;
-		// scale is a decimalised percentage 
 		double adjWidth = width*scale;
 		double adjHeight = height*scale;
 		Coordinate toDrawScaled = new Coordinate((int)adjWidth,(int)adjHeight);
@@ -418,29 +403,23 @@ public class GUI extends GameVisualiser {
 			
 			System.exit(1);
 		}
-		BufferedImage buffered = image;
-		
-		int buffHeight= (int) buffered.getHeight();
-		int buffWidth = (int) buffered.getWidth();
-		buffDimension = new Dimension(buffWidth,buffHeight);
-		
-		desDimension =  scale(a,0.80);
-		desDimension = aspectRatio(buffDimension,desDimension);
-		BufferedImage resized = resize(buffered, desDimension);
-		Test.printf(resized.getWidth());
-		Test.printf(resized.getHeight());
-		desDimension = new Dimension(resized.getWidth(), resized.getHeight());
+		int buffHeight= (int) image.getHeight();
+		int buffWidth = (int) image.getWidth();
+		oldImageDimensions = new Dimension(buffWidth,buffHeight);
+		resizedImageDimensions =  scaleImageDimensions(a,0.80);
+		resizedImageDimensions = aspectRatioImageDimensions(oldImageDimensions,resizedImageDimensions);
+		BufferedImage resized = resize(image, resizedImageDimensions);
+		resizedImageDimensions = new Dimension(resized.getWidth(), resized.getHeight());
 		JLabel background  = new JLabel(new ImageIcon(resized));
-		background.setSize((int) desDimension.getWidth(), (int) desDimension.getHeight());
+		background.setSize((int) resizedImageDimensions.getWidth(), (int) resizedImageDimensions.getHeight());
 		return background;
 	}
 
 	
-	public Dimension scale (Dimension a, double scale)
+	public Dimension scaleImageDimensions (Dimension a, double scale)
 	{
 		double height = a.getHeight();
 		double width = a.getWidth();
-		// scale is a decimalised percentage 
 		double adjWidth = width*scale;
 		double ratio = width/height;
 		double adjHeight = adjWidth/ratio;
@@ -450,7 +429,7 @@ public class GUI extends GameVisualiser {
 	
 
 	
-	private Dimension aspectRatio(Dimension imgSize, Dimension boundary) 
+	private Dimension aspectRatioImageDimensions(Dimension imgSize, Dimension boundary) 
 	{
 	    int original_width = imgSize.width;
 	    int original_height = imgSize.height;
@@ -471,8 +450,8 @@ public class GUI extends GameVisualiser {
 	        new_height = bound_height;
 	        //scale width to maintain aspect ratio
 	        new_width = (new_height * original_width) / original_height;
-    }
-    return new Dimension(new_width, new_height);
+	    }
+	    return new Dimension(new_width, new_height);
 	}
 	
 
