@@ -10,7 +10,7 @@ import java.util.Random;
  * Class that will hold the state of the game. This is the class that will need
  * to implement the interfaces that we have provided you with
  */
-public class GameState implements MapVisualisable, Initialisable, PlayerVisualisable, Visualisable{
+public class GameState implements MapVisualisable, Initialisable, PlayerVisualisable, Visualisable, Controllable{
 	
 	
 	
@@ -268,5 +268,45 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
+	@Override
+	public Boolean movePlayer(Integer playerId, Integer targetNodeId,
+			TicketType ticketType) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Integer getNodeIdFromLocation(Integer xPosition, Integer yPosition) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Boolean saveGame(String filename) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Boolean loadGame(String filename) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	//image for new button
+	//image for load button
+	//image for save button
+	//way of representing current player label
+	//way of representing next player label
+	//image for mr x tab
+	//image for detective tab
+	//image for mr x move log tab
+	//image for tabbed panes
+	//image for whole background
 	
 }

@@ -11,6 +11,17 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import javax.imageio.*;
 
+// ---------------Images needed ---------------
+//image for new button
+//image for load button
+//image for save button
+//way of representing current player label
+//way of representing next player label
+//image for mr x tab
+//image for detective tab
+//image for mr x move log tab
+//image for tabbed panes
+//image for whole background
 
 public class GUI extends GameVisualiser {
 	
@@ -85,8 +96,8 @@ public class GUI extends GameVisualiser {
 	        	 for(Component b : listComponents)
 	        	 {
 	        		 layeredPane.remove(b);
-	        		 layeredPane.repaint();
 	        	 }
+        		 layeredPane.repaint();
 	        	 displayPlayers();
 	         }          
 		});
