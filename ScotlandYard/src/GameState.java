@@ -273,6 +273,26 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 	@Override
 	public Boolean movePlayer(Integer playerId, Integer targetNodeId,
 			TicketType ticketType) {
+		Reader read = new Reader();
+		boolean check = false;
+		try {
+			read.read("graph.txt");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Graph graph = read.graph();
+		Integer currentNode = getNodeId(playerId);
+		List<Edge> neighboursCurrentNode = graph.edges(String.valueOf(currentNode));
+		for(Edge a : neighboursCurrentNode)
+		{
+			String connectedNode = a.connectedTo(String.valueOf(currentNode));
+			if(connectedNode.equals(String.valueOf(targetNodeId)))
+			{
+				
+			}
+		}
+		
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -298,15 +318,6 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 		return null;
 	}
 	
-	//image for new button
-	//image for load button
-	//image for save button
-	//way of representing current player label
-	//way of representing next player label
-	//image for mr x tab
-	//image for detective tab
-	//image for mr x move log tab
-	//image for tabbed panes
-	//image for whole background
+
 	
 }

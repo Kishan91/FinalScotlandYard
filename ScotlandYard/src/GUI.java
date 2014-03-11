@@ -11,7 +11,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import javax.imageio.*;
 
-// ---------------Images needed ---------------
+// Images needed ---------------`
 //image for new button
 //image for load button
 //image for save button
