@@ -5,8 +5,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import javax.imageio.*;
@@ -40,6 +39,12 @@ public class GUI extends GameVisualiser {
 	}
 	
 	
+	public void run()
+	{
+		displayMap();
+		displayButtons();
+	}
+
 	private double imageScale()
 	{
 		double oldHeight = oldImageDimensions.getHeight();
@@ -48,11 +53,7 @@ public class GUI extends GameVisualiser {
 		return ratio;
 	}
 
-	public void run()
-	{
-		displayMap();
-		displayButtons();
-	}
+
 	
 	private void displayButtons()
 	{
@@ -200,7 +201,7 @@ public class GUI extends GameVisualiser {
 		{
 			JPanel mrX = new JPanel();
 			mrX.setLayout(null);
-			mrX.setSize(430, 300);
+			mrX.setSize(430, 300); //
 			JLabel noBusTickets = new JLabel("Number of bus tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.Bus, 0));
 			JLabel noTaxiTickets = new JLabel("Number of taxi tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.Taxi, 0));
 			JLabel noTubeTickets = new JLabel("Number of tube tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.Underground, 0));
@@ -233,7 +234,7 @@ public class GUI extends GameVisualiser {
 	
 	private void detectiveLabels(int index)
 	{
-		
+		//get rid of index weird stuff
 		for(int i = index; i < playerVisualisable.getDetectiveIdList().size() + 1; i++)
 		{
 			JPanel detective1 = new JPanel();
