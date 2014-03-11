@@ -289,14 +289,27 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 			String connectedNode = a.connectedTo(String.valueOf(currentNode));
 			if(connectedNode.equals(String.valueOf(targetNodeId)))
 			{
-				
+				if(checkEdge(ticketType, a.type)) check = true;
 			}
 		}
-		
-		// TODO Auto-generated method stub
-		return null;
+		return check;
 	}
-
+	
+	private boolean checkEdge(TicketType type1, Edge.EdgeType type2)
+	{
+		boolean check = false;
+		if(type1 == TicketType.Bus && type2 == Edge.EdgeType.Bus)
+		{
+			check = true;
+		} else if (type1 == TicketType.Taxi && type2 == Edge.EdgeType.Taxi)
+		{
+			check = true;
+		} else if (type1 == TicketType.Underground && type2 == Edge.EdgeType.Underground)
+		{
+			check = true;
+		}
+		return check;
+	}
 
 	@Override
 	public Integer getNodeIdFromLocation(Integer xPosition, Integer yPosition) {
