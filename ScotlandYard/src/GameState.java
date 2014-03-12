@@ -55,6 +55,7 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 		int idxX = new Random().nextInt(MrXstartPos.length);
 		mrX.setPosition(MrXstartPos[idxX]);
 		mrX.ID = 0;
+		idxArray.add(mrX.ID);
 		listMrX.add(mrX);
 		mrXIdList.add(0);
 		
@@ -289,7 +290,49 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 			String connectedNode = a.connectedTo(String.valueOf(currentNode));
 			if(connectedNode.equals(String.valueOf(targetNodeId)))
 			{
-				if(checkEdge(ticketType, a.type)) check = true;
+				if(checkEdge(ticketType, a.type)) 
+				{
+					for(MrX b : listMrX)
+					{
+						if(b.ID.equals(playerId))
+						{
+							check = true;
+							if(ticketType == TicketType.Bus && b.bus.size() > 0) b.bus.remove(b.bus.size() - 1);
+							else if(ticketType == TicketType.Taxi && b.taxi.size() > 0) b.taxi.remove(b.taxi.size() - 1);
+							else if(ticketType == TicketType.Underground && b.tube.size() > 0) b.tube.remove(b.tube.size() - 1);
+							else if (ticketType == TicketType.SecretMove && b.Ssecret.size() > 0) b.Ssecret.remove(b.Ssecret.size() - 1);
+							else if (ticketType == TicketType.DoubleMove && b.Sdouble.size() > 0) b.Sdouble.remove(b.Sdouble.size() - 1);
+							else check = false;
+							if(check == true)
+							{
+								b.Position = targetNodeId;
+								currentPlayerID = getNextPlayerToMove();
+								currentTurn++;
+							}
+						}
+					}
+					for(Detective b : listDetectives)
+					{
+						if(b.ID.equals(playerId))
+						{
+							check = true;
+							if(ticketType == TicketType.Bus && b.bus.size() > 0) b.bus.remove(b.bus.size() - 1);
+							else if(ticketType == TicketType.Taxi && b.taxi.size() > 0) b.taxi.remove(b.taxi.size() - 1);
+							else if(ticketType == TicketType.Underground && b.tube.size() > 0) b.tube.remove(b.tube.size() - 1);
+							else check = false;
+							if(check == true)
+							{
+								b.Position = targetNodeId;
+								currentPlayerID = getNextPlayerToMove();
+								currentTurn++;
+							}
+						}
+					}
+					
+				}
+					
+					
+				
 			}
 		}
 		return check;
@@ -319,6 +362,7 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 	//we compute the distance between these coordinates and the mouseclick coordinates
 	//if the distance is less than a certain amount - that's the node they've clicked on - we can then check if it's a valid move with the tickets the player has [using the movePlayer function]
 	//otherwise if none of the distances are less than the certain amount - they clicked on an invalid node
+	 */
 	@Override
 	public Integer getNodeIdFromLocation(Integer xPosition, Integer yPosition) {
 		//have to find a way to get the x and y coordinates given a mouse click - which can be passed into this function
@@ -342,13 +386,12 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 	{
 		boolean check = false;
 		int distance = (int) Math.sqrt((Math.pow((newX - oldX), 2)) + Math.pow((newY - oldY), 2));
-		if(distance < 10) check = true;
+		if(distance < 44) check = true;
 		else check = false;
 		return check;
 		//just have to worry about what this "certain amount" is <- 10 will be changed to this certain amount!
-		
 	}
-	*/
+	
 	
 	@Override
 	public Boolean saveGame(String filename) {
@@ -362,14 +405,4 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-
-	@Override
-	public Integer getNodeIdFromLocation(Integer xPosition, Integer yPosition) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-
-	
 }
