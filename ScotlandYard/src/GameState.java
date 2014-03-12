@@ -355,43 +355,6 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 	}
 	
 	
-	/* METHOD 1
-	//they click on the screen - we get the x and y coordinate of the mouse click
-	//using the current node the player is on, we use the edges function in the Graph class to get all the possible places the player can move to
-	//we get the x and y coordinate of all these places using the getLocationX and getLocationY functions
-	//we compute the distance between these coordinates and the mouseclick coordinates
-	//if the distance is less than a certain amount - that's the node they've clicked on - we can then check if it's a valid move with the tickets the player has [using the movePlayer function]
-	//otherwise if none of the distances are less than the certain amount - they clicked on an invalid node
-	 */
-	@Override
-	public Integer getNodeIdFromLocation(Integer xPosition, Integer yPosition) {
-		//have to find a way to get the x and y coordinates given a mouse click - which can be passed into this function
-		int node = getNodeId(currentPlayerID);
-		int nodeMoveTo = -1;
-		List<Edge> nodeNeighbours = graph.edges(String.valueOf(node));
-		for(Edge a : nodeNeighbours)
-		{
-			String connectedNode = a.connectedTo(String.valueOf(node));
-			int nodeXCoordinate = getLocationX(Integer.valueOf(connectedNode));
-			int nodeYCoordinate = getLocationY(Integer.valueOf(connectedNode));
-			if(withinNodeRegion(xPosition, yPosition, nodeXCoordinate, nodeYCoordinate))
-			{
-				nodeMoveTo = Integer.valueOf(connectedNode);
-			}
-		}
-		return nodeMoveTo;
-	}
-
-	private boolean withinNodeRegion(int oldX, int oldY, int newX, int newY)
-	{
-		boolean check = false;
-		int distance = (int) Math.sqrt((Math.pow((newX - oldX), 2)) + Math.pow((newY - oldY), 2));
-		if(distance < 44) check = true;
-		else check = false;
-		return check;
-		//just have to worry about what this "certain amount" is <- 10 will be changed to this certain amount!
-	}
-	
 	
 	@Override
 	public Boolean saveGame(String filename) {
@@ -404,5 +367,35 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 	public Boolean loadGame(String filename) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+
+	@Override
+	public Integer getNodeIdFromLocation(Integer xPosition, Integer yPosition) {
+		int newNode = -1;
+		String currentNode = getNodeId(currentPlayerID).toString();
+		List<Edge> nodeNeighbours = graph.edges(currentNode);
+		for(Edge a : nodeNeighbours)
+		{
+			String connectedNode = a.connectedTo(currentNode);
+			Integer nodeXCoordinate = getLocationX(Integer.valueOf(connectedNode));
+			Integer nodeYCoordinate = getLocationY(Integer.valueOf(connectedNode));
+			if(withinNodeRegion(xPosition, yPosition, nodeXCoordinate, nodeYCoordinate))
+			{
+				newNode = Integer.parseInt(connectedNode);
+			}
+		}
+		return newNode;
+	}
+
+
+	private boolean withinNodeRegion(Integer xPosition, Integer yPosition,
+			Integer nodeXCoordinate, Integer nodeYCoordinate) {
+			boolean check = false;
+			int distance = (int) Math.sqrt((Math.pow((nodeXCoordinate - xPosition), 2)) + Math.pow((nodeYCoordinate - yPosition), 2));
+			if(distance < 14) check = true;
+			else check = false;
+			Test.printf("DISTANCE" + distance);
+			return check;
 	}
 }

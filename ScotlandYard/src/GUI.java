@@ -36,7 +36,6 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 	private JTabbedPane tabbedPane;
 	JLabel mousecursorLabel;
 	int extraH;
-	int top;
 	BufferedImage mousecursor;
 	
 	private class Coordinate
@@ -291,14 +290,13 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 	{
 		window = new JFrame("Scotland Yard");
 		window.setTitle("Scotland Yard");
-		window.addMouseMotionListener(this); 
-		window.addMouseListener(this);
+
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(window.getGraphicsConfiguration());
 		int bottom = scnMax.bottom;
 		int left = scnMax.left;
 		int right = scnMax.right;
-		top = scnMax.top;
+		int top = scnMax.top;
 		int screenWidth = (int) screenSize.getWidth() - left - right - window.getWidth();
 		int screenHeight = (int) screenSize.getHeight() - bottom - top - window.getHeight();
 		Dimension effectiveScreenRes = new Dimension(screenWidth,screenHeight);
@@ -309,12 +307,13 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		layeredPane.setPreferredSize(effectiveScreenRes);
 		window.add(layeredPane);
 		JLabel background = createImage(effectiveScreenRes);
+		window.addMouseListener(this);
+		window.addMouseMotionListener(this); 
 		layeredPane.add(background, 0);
 		displayPlayers();
 		window.setVisible(true);
 		window.pack();
-		int actualHeight = window.getContentPane().getHeight();
-		extraH = effectiveScreenRes.height - actualHeight;
+		extraH = screenSize.height - window.getContentPane().getHeight() - bottom;
 	}
 	
 	
@@ -524,44 +523,49 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 	
 	public void mouseClicked (MouseEvent event)
 	{
-		int xPos = event.getXOnScreen();
-		int yPos = event.getYOnScreen();
+		boolean movePlayer = false;
+		int xPos = (int) (event.getXOnScreen() / imageScale());
+		int yPos = (int) ((event.getYOnScreen() - extraH) / imageScale());
+		
 		Integer newNode = controllable.getNodeIdFromLocation(xPos, yPos);
-		Test.printf(newNode);
-		Object[] possibilities = {"Train", "Bus", "Taxi", "Special move", "Double move"};
-		String s = (String)JOptionPane.showInputDialog(
-		                    window,
-		                    "Pick a transport method",
-		                    "Transport selection",
-		                    JOptionPane.PLAIN_MESSAGE,
-		                    null ,
-		                    possibilities,
-		                    "Train");
+		Test.printf("NEW NODE" + newNode);
 		Initialisable.TicketType ticketType = null;
-		if(s == "Train") ticketType = Initialisable.TicketType.Underground;
-		else if (s == "Bus") ticketType = Initialisable.TicketType.Bus;
-		else if (s == "Taxi") ticketType = Initialisable.TicketType.Taxi;
-		else if (s == "Special move") ticketType = Initialisable.TicketType.SecretMove;
-		else if (s == "Double move") ticketType = Initialisable.TicketType.DoubleMove;
-		
-		boolean movePlayer = controllable.movePlayer(currentPlayerID, newNode, ticketType);
-		if(movePlayer == true)
+		if(newNode != -1)
 		{
-			Test.printf("LEL");
-			Component[] listComponents = layeredPane.getComponentsInLayer(1);
-			for(Component b : listComponents)
-       	 	{
-				layeredPane.remove(b);
-       	 	}
-   		 	layeredPane.repaint();
-   		 	currentPlayerID++;
-   		 	displayPlayers();
-		} else 
-		{
-			Test.printf("Invalid move");
+			Object[] possibilities = {"Train", "Bus", "Taxi", "Special move", "Double move"};
+			String s = (String)JOptionPane.showInputDialog(
+                    window,
+                    "Pick a transport method",
+                    "Transport selection",
+                    JOptionPane.PLAIN_MESSAGE,
+                    null ,
+                    possibilities,
+                    "Train");
+			
+			if(s == "Train") ticketType = Initialisable.TicketType.Underground;
+			else if (s == "Bus") ticketType = Initialisable.TicketType.Bus;
+			else if (s == "Taxi") ticketType = Initialisable.TicketType.Taxi;
+			else if (s == "Special move") ticketType = Initialisable.TicketType.SecretMove;
+			else if (s == "Double move") ticketType = Initialisable.TicketType.DoubleMove;
+			movePlayer = controllable.movePlayer(currentPlayerID, newNode, ticketType);
+			if(movePlayer == true)
+			{
+				Test.printf("LEL");
+				Component[] listComponents = layeredPane.getComponentsInLayer(1);
+				for(Component b : listComponents)
+	       	 	{
+					layeredPane.remove(b);
+	       	 	}
+	   		 	layeredPane.repaint();
+	   		 	currentPlayerID++;
+	   		 	displayPlayers();
+			} else 
+			{
+				Test.printf("Invalid move");
+			}
+			
 		}
-		
-		// Test.printf("X coordinate CLICK" + xPos + "Y coordinate CLICK" +  yPos);
+		Test.printf("X coordinate CLICK" + xPos + "Y coordinate CLICK" +  yPos);
 	}
 	
 	public void mouseDragged(MouseEvent arg0) {}
