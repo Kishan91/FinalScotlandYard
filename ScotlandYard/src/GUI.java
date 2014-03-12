@@ -109,6 +109,8 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 	        	 }
         		 layeredPane.repaint();
 	        	 displayPlayers();
+	        	 tabbedPane.setSelectedIndex(0);
+	        	 currentPlayerID = 0;
 	         }          
 		});
 	}
@@ -169,10 +171,10 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 	
 	private void nextPlayerLabel()
 	{
-		String type;
-		if(visualisable.getNextPlayerToMove() == 0) type = "Mr X ";
-		else type = "Detective ";
-		JLabel nextPlayerLabel = new JLabel("Next Player: " + type + visualisable.getNextPlayerToMove());
+		JLabel nextPlayerLabel;
+		if(visualisable.getNextPlayerToMove() == 0) nextPlayerLabel = new JLabel("Next Player: Mr X");
+		else nextPlayerLabel = new JLabel("Next Player: Detective " + visualisable.getNextPlayerToMove());
+	 
 		nextPlayerLabel.setLocation((int) (resizedImageDimensions.getWidth() * 0.5), (int) (resizedImageDimensions.getHeight() + 60));
 		nextPlayerLabel.setSize(390,60);
 		Border border = BorderFactory.createLineBorder(Color.RED, 5);
@@ -254,7 +256,6 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 	
 	private void detectiveLabels(int index)
 	{
-		//get rid of index weird stuff
 		for(int i = index; i < playerVisualisable.getDetectiveIdList().size() + 1; i++)
 		{
 			JPanel detective1 = new JPanel();
@@ -279,6 +280,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 			detective1.setVisible(true);
 			tabbedPane.add("Detective " + String.valueOf(i), detective1);
 		}
+			tabbedPane.setSelectedIndex(currentPlayerID);
 			tabbedPane.setVisible(true);
 			layeredPane.add(tabbedPane);
 			layeredPane.setLayer(tabbedPane, 1);
@@ -290,7 +292,6 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 	{
 		window = new JFrame("Scotland Yard");
 		window.setTitle("Scotland Yard");
-
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(window.getGraphicsConfiguration());
 		int bottom = scnMax.bottom;
@@ -547,17 +548,17 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 			else if (s == "Taxi") ticketType = Initialisable.TicketType.Taxi;
 			else if (s == "Special move") ticketType = Initialisable.TicketType.SecretMove;
 			else if (s == "Double move") ticketType = Initialisable.TicketType.DoubleMove;
-			movePlayer = controllable.movePlayer(currentPlayerID, newNode, ticketType);
+			int tempPlayerID = currentPlayerID;
+			currentPlayerID = visualisable.getNextPlayerToMove();
+			movePlayer = controllable.movePlayer(tempPlayerID, newNode, ticketType);
 			if(movePlayer == true)
 			{
-				Test.printf("LEL");
 				Component[] listComponents = layeredPane.getComponentsInLayer(1);
 				for(Component b : listComponents)
 	       	 	{
 					layeredPane.remove(b);
 	       	 	}
 	   		 	layeredPane.repaint();
-	   		 	currentPlayerID++;
 	   		 	displayPlayers();
 			} else 
 			{

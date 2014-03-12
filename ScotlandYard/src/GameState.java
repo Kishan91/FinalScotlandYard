@@ -250,24 +250,10 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 
 	@Override
 	public Integer getNextPlayerToMove() {
-		Integer nextPlayer;
-		if (mrXIdList.contains(currentPlayerID))
-		{
-			if(mrXIdList.get(mrXIdList.size()-1) == currentPlayerID)
-			{
-				nextPlayer = detectiveIdList.get(0);
-			}
-			else {
-				nextPlayer = currentPlayerID + 1;
-			}
-		} else {
-			if(detectiveIdList.get(detectiveIdList.size() - 1) == currentPlayerID)
-			{
-				nextPlayer = mrXIdList.get(0);
-			} else {
-				nextPlayer = currentPlayerID + 1;
-			}
-		}
+		Integer nextPlayer  = 0;
+		int numberOfPlayers = mrXIdList.size() + detectiveIdList.size() - 1;
+		if(currentPlayerID == numberOfPlayers)  nextPlayer = mrXIdList.get(0);
+		else nextPlayer = currentPlayerID + 1;
 		return nextPlayer;
 	}
 
