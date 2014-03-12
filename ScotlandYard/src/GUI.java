@@ -9,6 +9,8 @@ import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import javax.imageio.*;
+import java.awt.event.MouseMotionListener;
+
 
 // Images needed ---------------`
 //image for new button
@@ -22,7 +24,7 @@ import javax.imageio.*;
 //image for tabbed panes
 //image for whole background
 
-public class GUI extends GameVisualiser {
+public class GUI extends GameVisualiser implements ActionListener, MouseListener, MouseMotionListener  {
 	
 	private Dimension resizedImageDimensions;
 	private Dimension oldImageDimensions;
@@ -31,6 +33,10 @@ public class GUI extends GameVisualiser {
 	private JLayeredPane layeredPane;
 	private int currentPlayerID = 0;
 	private JTabbedPane tabbedPane;
+	JLabel mousecursorLabel;
+	int extraH;
+	int top;
+	BufferedImage mousecursor;
 	
 	private class Coordinate
 	{
@@ -53,7 +59,11 @@ public class GUI extends GameVisualiser {
 	public void run()
 	{
 		displayMap();
+		drawCursorLabel();
 		displayButtons();
+		
+		
+		
 	}
 
 	private double imageScale()
@@ -281,12 +291,13 @@ public class GUI extends GameVisualiser {
 	{
 		window = new JFrame("Scotland Yard");
 		window.setTitle("Scotland Yard");
+		window.addMouseMotionListener(this); 
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(window.getGraphicsConfiguration());
 		int bottom = scnMax.bottom;
 		int left = scnMax.left;
 		int right = scnMax.right;
-		int top = scnMax.top;
+		top = scnMax.top;
 		int screenWidth = (int) screenSize.getWidth() - left - right - window.getWidth();
 		int screenHeight = (int) screenSize.getHeight() - bottom - top - window.getHeight();
 		Dimension effectiveScreenRes = new Dimension(screenWidth,screenHeight);
@@ -301,6 +312,8 @@ public class GUI extends GameVisualiser {
 		displayPlayers();
 		window.setVisible(true);
 		window.pack();
+		int actualHeight = window.getContentPane().getHeight();
+		extraH = effectiveScreenRes.height - actualHeight;
 	}
 	
 	
@@ -479,5 +492,45 @@ public class GUI extends GameVisualiser {
 	    g2d.dispose();
 	    return bi;
 	}
+	
+	
+	private void drawCursorLabel()
+	{
+		int size = (int) (50 * ratio);
+		URL cursorURL = this.getClass().getResource("mouse cursor.png");
+		mousecursor = null;
+		try {
+			mousecursor = ImageIO.read(cursorURL);
+			mousecursor = scale(mousecursor, BufferedImage.TYPE_INT_ARGB, size);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void mouseMoved(MouseEvent event) {
+        int xPos = event.getXOnScreen();
+        int yPos = event.getYOnScreen();
+        if(xPos <= resizedImageDimensions.getWidth() - 20 && yPos <= resizedImageDimensions.getHeight() + extraH){
+    		Test.printf("X coordinate" + xPos + "Y coordinate" + yPos);	
+    		Cursor customCursor = Toolkit.getDefaultToolkit().createCustomCursor(
+    		    mousecursor, new Point(25, 25), "mouse cursor");
+    		window.setCursor(customCursor);
+        } else {
+        	window.setCursor(Cursor.getDefaultCursor());
+        }
+	}
+	
+	public void mouseClicked (MouseEvent event)
+	{
+		Test.printf("COME ON"); //this doesn't work pff
+	}
+	
+	public void mouseDragged(MouseEvent arg0) {}
+	public void mouseEntered(MouseEvent arg0) {}
+	public void mouseExited(MouseEvent arg0) {}
+	public void mousePressed(MouseEvent arg0) {}
+	public void mouseReleased(MouseEvent arg0) {}
+	public void actionPerformed(ActionEvent arg0) {}
 
 }
