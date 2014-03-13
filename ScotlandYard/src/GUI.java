@@ -62,6 +62,34 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		drawCursorLabel();
 		displayButtons();
 	}
+	
+	private void drawHighlights()
+	{
+		int size = (int) (30 * ratio);
+        int i = 50;
+        ArrayList<String> currentNodeNeighbours = (ArrayList<String>) customVisualiser.getNodeNeighbours(currentPlayerID);
+        for(String node : currentNodeNeighbours){
+        	int x = visualisable.getLocationX(Integer.valueOf(node));
+        	int y = visualisable.getLocationY(Integer.valueOf(node));
+        	Coordinate scaled = scaleCoordinate(new Coordinate(x, y));
+        	URL highlightURL = this.getClass().getResource("highlight.png");
+    		ImageIcon highlightImage = null;
+    		BufferedImage highlightBuffered = null;
+    		try {
+    			highlightBuffered = ImageIO.read(highlightURL);
+    			highlightBuffered = scale(highlightBuffered, BufferedImage.TYPE_INT_ARGB, size);
+    		} catch (IOException e1) {
+    			e1.printStackTrace();
+    		}
+    		highlightImage = new ImageIcon(highlightBuffered);
+        	JLabel highlightLabel = new JLabel(highlightImage);
+    		highlightLabel.setLocation(scaled.x - 16, scaled.y - 15);
+    		highlightLabel.setSize(30,30);
+    		layeredPane.add(highlightLabel, i);
+    		layeredPane.setLayer(highlightLabel, 1);
+    		i++;
+       	}
+	}
 
 	private double imageScale()
 	{
@@ -230,24 +258,28 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 			JLabel noSdoubleTickets = new JLabel("Number of double move tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.DoubleMove, 0));
 			JLabel noSpecialTickets = new JLabel("Number of special tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.SecretMove, 0));
 			JLabel playerPosition = new JLabel("Player position: " + visualisable.getNodeId(0));
+			JLabel playerStationType = new JLabel("Current station type: " + customVisualiser.getStationType(0));
 			noBusTickets.setLocation(0, 10);
 			noTaxiTickets.setLocation(0, 40);
 			noTubeTickets.setLocation(0, 70);
 			noSdoubleTickets.setLocation(0, 100);
 			noSpecialTickets.setLocation(0, 130);
 			playerPosition.setLocation(0, 160);
+			playerStationType.setLocation(0, 190);
 			noBusTickets.setSize(400, 20);
 			noTaxiTickets.setSize(400, 20);
 			noTubeTickets.setSize(400, 20);
 			noSdoubleTickets.setSize(400, 20);
 			noSpecialTickets.setSize(400, 20);
 			playerPosition.setSize(400, 20);
+			playerStationType.setSize(400, 20);
 			mrX.add(noBusTickets);
 			mrX.add(noTaxiTickets);
 			mrX.add(noTubeTickets);
 			mrX.add(noSdoubleTickets);
 			mrX.add(noSpecialTickets);
 			mrX.add(playerPosition);
+			mrX.add(playerStationType);
 			mrX.setVisible(true);
 			tabbedPane.add("Mr X", mrX);
 		}
@@ -265,18 +297,22 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 			JLabel noTaxiTickets = new JLabel("Number of taxi tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.Taxi, i));
 			JLabel noTubeTickets = new JLabel("Number of tube tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.Underground, i));
 			JLabel playerPosition = new JLabel("Player position: " + visualisable.getNodeId(i));
+			JLabel playerStationType = new JLabel("Current station type: " + customVisualiser.getStationType(i));
 			noBusTickets.setLocation(0, 10);
 			noTaxiTickets.setLocation(0, 40);
 			noTubeTickets.setLocation(0, 70);
 			playerPosition.setLocation(0, 100);
+			playerStationType.setLocation(0, 130);
 			noBusTickets.setSize(400, 20);
 			noTaxiTickets.setSize(400, 20);
 			noTubeTickets.setSize(400, 20);
 			playerPosition.setSize(400, 20);
+			playerStationType.setSize(400, 20);
 			detective1.add(noBusTickets);
 			detective1.add(noTaxiTickets);
 			detective1.add(noTubeTickets);
 			detective1.add(playerPosition);
+			detective1.add(playerStationType);
 			detective1.setVisible(true);
 			tabbedPane.add("Detective " + String.valueOf(i), detective1);
 		}
@@ -347,6 +383,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		int index = mrXLabel();
 		detectiveLabels(index);
 		mrXMoveLog();
+		drawHighlights();
 	}
 	
 	private JLabel drawNode(Integer node, playerType type)
@@ -508,19 +545,26 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		}
 	}
 	
+	
+	
 	@Override
 	public void mouseMoved(MouseEvent event) {
-        int xPos = event.getXOnScreen();
+	
+		int xPos = event.getXOnScreen();
         int yPos = event.getYOnScreen();
         if(xPos <= resizedImageDimensions.getWidth() - 20 && yPos <= resizedImageDimensions.getHeight() + extraH){
-    		Test.printf("X coordinate" + xPos + "Y coordinate" + yPos);	
+    		//Test.printf("X coordinate" + xPos + "Y coordinate" + yPos);	
     		Cursor customCursor = Toolkit.getDefaultToolkit().createCustomCursor(
     		    mousecursor, new Point(25, 25), "mouse cursor");
     		window.setCursor(customCursor);
         } else {
         	window.setCursor(Cursor.getDefaultCursor());
         }
+        
 	}
+	
+
+	
 	
 	public void mouseClicked (MouseEvent event)
 	{
@@ -548,22 +592,29 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 			else if (s == "Taxi") ticketType = Initialisable.TicketType.Taxi;
 			else if (s == "Special move") ticketType = Initialisable.TicketType.SecretMove;
 			else if (s == "Double move") ticketType = Initialisable.TicketType.DoubleMove;
-			int tempPlayerID = currentPlayerID;
-			currentPlayerID = visualisable.getNextPlayerToMove();
-			movePlayer = controllable.movePlayer(tempPlayerID, newNode, ticketType);
-			if(movePlayer == true)
+			if(s != null)
 			{
-				Component[] listComponents = layeredPane.getComponentsInLayer(1);
-				for(Component b : listComponents)
-	       	 	{
-					layeredPane.remove(b);
-	       	 	}
-	   		 	layeredPane.repaint();
-	   		 	displayPlayers();
-			} else 
-			{
-				Test.printf("Invalid move");
+				int tempPlayerID = visualisable.getNextPlayerToMove();
+				movePlayer = controllable.movePlayer(currentPlayerID, newNode, ticketType);
+				if(movePlayer == true)
+				{
+					Component[] listComponents = layeredPane.getComponentsInLayer(1);
+					for(Component b : listComponents)
+		       	 	{
+						layeredPane.remove(b);
+		       	 	}
+		   		 	layeredPane.repaint();
+		   		 	Test.printf("NEXT PLAYER PLS" + visualisable.getNextPlayerToMove());
+		   		 	currentPlayerID = tempPlayerID;
+		   		 	displayPlayers();
+				} else 
+				{
+					JOptionPane.showMessageDialog(window, "Invalid move" 
+				                ,"Player move", JOptionPane.ERROR_MESSAGE);
+					Test.printf("Invalid move");
+				}	
 			}
+			
 			
 		}
 		Test.printf("X coordinate CLICK" + xPos + "Y coordinate CLICK" +  yPos);

@@ -1,60 +1,36 @@
 import java.util.ArrayList;
 
 public class MrX extends Player {
-
+	//stores visibility of Mr X
 	private boolean visible = false;
+	
 	public MrX()
 	{
+		//assigns 3 bus tickets and 3 tube tickets for Mr X
 		for(int i = 0; i < 3; i++)
 		{
 			bus.add(GameState.TicketType.Bus); 
 			tube.add(GameState.TicketType.Underground);
 		}
+		//assigns 4 taxi tickets and 4 secret tickets for Mr X
 		for(int i = 0; i < 4; i++)
 		{
 			taxi.add(GameState.TicketType.Taxi);
 			Ssecret.add(GameState.TicketType.SecretMove);
 		}
-		
+		//assigns 2 double move tickets for Mr X
 		for(int i = 0; i < 2; i++) Sdouble.add(GameState.TicketType.DoubleMove);
 	}
 	
-	// for part 4 ye
-	@Override
-	public void move() {
-		// TODO Auto-generated method stub
-		
+	//sets visiblity of Mr X
+	public void setVisibile(boolean iVisible)
+	{
+		visible = iVisible;
 	}
 	
+	//gets visiblity of Mr X
 	public boolean isVisible()
 	{
-		return visible;	
+		return visible;
 	}
-
-
-	@Override
-	public ArrayList<ArrayList<GameState.TicketType>> getTransport() {
-		// TODO Auto-generated method stub
-		ArrayList<ArrayList<GameState.TicketType>> tickets = new ArrayList<ArrayList<GameState.TicketType>>();
-		tickets.add(bus);
-		tickets.add(tube);
-		tickets.add(taxi);
-		tickets.add(Ssecret);
-		tickets.add(Sdouble);
-		return tickets;
-	}
-	
-	
-	/*public ArrayList<Card> getUsedTransport()
-	{
-		return null;
-	}
-	
-	public void specialMove()
-	{
-		
-	}
-	
-	*/
-	
 }
