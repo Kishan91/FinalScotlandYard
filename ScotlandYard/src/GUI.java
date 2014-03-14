@@ -29,18 +29,6 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 	//custom mouse cursor
 	private BufferedImage mousecursor;
 	
-	//Coordinate object with x, y coordinates set in the constructor
-	private class Coordinate
-	{
-		int x;
-		int y;	
-		public Coordinate(int xvalue, int yvalue)
-		{
-			x = xvalue;
-			y = yvalue;
-		}
-	}
-	
 	//enum playerType to distinguish between player types
 	enum playerType { Detective, MrX }
 	
@@ -99,7 +87,6 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		displayPlayers();
 		//this gives height of the program title bar and the taskbar above the window if one exists - used later in the mouseMoved and mouseClicked methods
 		extraH = screenSize.height - window.getContentPane().getHeight() - bottom;
-		Test.printf("LEL" + window.getContentPane().getHeight());
 	}
 	
 	//creates a JLabel for the map with the given dimensions + scaled
@@ -246,9 +233,9 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 	private JLabel drawNode(Integer node, playerType type)
 	{
 		//gets X and Y coordinate for the given node
-		Coordinate toDrawUnscaled = new Coordinate(playerVisualisable.getLocationX(node), playerVisualisable.getLocationY(node));
+		Point toDrawUnscaled = new Point(playerVisualisable.getLocationX(node), playerVisualisable.getLocationY(node));
 		//scales the coordinates given map scaling
-		Coordinate toDrawScaled = scaleCoordinate(toDrawUnscaled);
+		Point toDrawScaled = scalePoint(toDrawUnscaled);
 		//creates JLabel using drawPlayer function
 		JLabel toDraw = drawPlayer(toDrawScaled.x, toDrawScaled.y, type);
 		//returns label
@@ -256,7 +243,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 	}
 
 	//scales the coordinate given by the map scale factor
-	private Coordinate scaleCoordinate(Coordinate toDrawUnscaled)
+	private Point scalePoint(Point toDrawUnscaled)
 	{
 		//gets scale factor that the map is scaled by
 		double scale = imageScale();
@@ -264,7 +251,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		double adjWidth = toDrawUnscaled.x*scale;
 		double adjHeight = toDrawUnscaled.y*scale;
 		//stores them in a coordinate
-		Coordinate toDrawScaled = new Coordinate((int)adjWidth,(int)adjHeight);
+		Point toDrawScaled = new Point((int)adjWidth,(int)adjHeight);
 		//returns the coordinate
 		return toDrawScaled;
 	}
@@ -540,7 +527,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
         	int x = visualisable.getLocationX(Integer.valueOf(node));
         	int y = visualisable.getLocationY(Integer.valueOf(node));
         	//scales the coordinates
-        	Coordinate scaled = scaleCoordinate(new Coordinate(x, y));
+        	Point scaled = scalePoint(new Point(x, y));
         	//gest the highlightURL for this png and reads it into a bufferedImage
         	URL highlightURL = this.getClass().getResource("highlight.png");
     		ImageIcon highlightImage = null;
@@ -613,10 +600,22 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		//when the button is pressed, this method in this listener is called
 		newGame.addActionListener(new ActionListener() {
 	         public void actionPerformed(ActionEvent e) {
-	        	 //gets all the components in layer 1
-	        	 Component[] listComponents = layeredPane.getComponentsInLayer(1);
-	        	 //reinitialises the game
-	        	 initialisable.initialiseGame(3);
+	        	//gets all the components in layer 1
+	        	Component[] listComponents = layeredPane.getComponentsInLayer(1);
+	        	//sets window to be invisible
+	        	window.setVisible(false);
+	        	//asks the user for the number of detectives
+	        	JFrame detectiveInput = new JFrame("Number of detectives?");
+	        	detectiveInput.setTitle("Scotland Yard");
+	     		int noDetectives = 0;
+	     		Object[] possibilities = {"3", "4", "5","6", "7", "8", "9", "10"};
+	     		String s = (String)JOptionPane.showInputDialog(detectiveInput,"Pick the number of detectives: ", "Detective selection",
+	     	                JOptionPane.PLAIN_MESSAGE, null , possibilities, "3");
+	     		//stores the number of detectives
+	     		if(s == null) System.exit(0);
+	     		else noDetectives = Integer.parseInt(s);
+	     		//reinitialises the game
+	        	initialisable.initialiseGame(noDetectives);
 	        	 //removes all the components in layer 1 from the layered pane
 	        	 for(Component b : listComponents)
 	        	 {
@@ -630,6 +629,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 	        	 tabbedPane.setSelectedIndex(0);
 	        	 //sets the currentPlayerID to 0
 	        	 currentPlayerID = 0;
+	        	 window.setVisible(true);
 	         }          
 		});
 	}

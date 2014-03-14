@@ -19,7 +19,7 @@ import java.util.Random;
    //implement load and save game
    //what to do when players run out of tickets
    //animation between nodes
-   //custom number of detectives
+   //custom number of detectives -- DONE!
    //SORT SCALING PROPERLY
    //Mr X tickets - get form pile
     * 
@@ -34,6 +34,7 @@ import java.util.Random;
 	//image for mr x move log tab
 	//image for tabbed panes
 	//image for whole background
+	//improve drawPlayer function -- draw all components initially, then have a placePlayer function that updates locations
     * 
     * 
  */
@@ -44,15 +45,25 @@ import java.util.Random;
  */
 public class GameState implements MapVisualisable, Initialisable, PlayerVisualisable, Visualisable, Controllable, customVisualisable{
 	
+	//Stores list of Detective players
 	private ArrayList<Detective> listDetectives;
+	//Stores list of Mr X players
 	private ArrayList<MrX> listMrX;
+	//Array of Detective start positions
 	private final Integer[] DstartPos = new Integer[]{13,26,29,34,50,53,91,94,103,112,117,132,138,141,155,174,197,198};
+	//Array of Mr X start positions
     private final Integer[] MrXstartPos = new Integer[]{51, 146, 45, 132, 106, 78, 127, 71, 172, 170, 166, 35, 104};
+    //String array that stores each line in the pos.txt file except the first line
     private String[] posTxtStrings;
+    //List of Mr X ID's
     private ArrayList<Integer> mrXIdList;
+    //List of Detective ID's
     private ArrayList<Integer> detectiveIdList;
+    //current player ID
     private int currentPlayerID;
+    //current game turn
     private int currentTurn = 1;
+    //graph file
     private Graph graph;
     
 	/**
