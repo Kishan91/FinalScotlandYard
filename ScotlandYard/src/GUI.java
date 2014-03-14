@@ -738,13 +738,48 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 			{
 				//get the next player to move and stores it in a temp variable
 				int tempPlayerID = visualisable.getNextPlayerToMove();
+				Integer currentNode = playerVisualisable.getNodeId(currentPlayerID);
 				//moves the player - returns true if it is successful, otherwise returns false
 				movePlayer = controllable.movePlayer(currentPlayerID, newNode, ticketType);
 				//if true
 				if(movePlayer == true)
 				{
 					//remove all layer 1 components
-					Component[] listComponents = layeredPane.getComponentsInLayer(1);
+					final Component[] listComponents = layeredPane.getComponentsInLayer(1);
+					
+					/*
+					 * Animation try
+					 * 
+					Point currentNodePoint = new Point(playerVisualisable.getLocationX(currentNode), playerVisualisable.getLocationY(currentNode));
+					Point newNodePoint = new Point(playerVisualisable.getLocationX(newNode), playerVisualisable.getLocationY(newNode));
+					// double distance = Math.sqrt((Math.pow((currentNodePoint.x - newNodePoint.x), 2)) + Math.pow((currentNodePoint.y - newNodePoint.y), 2));	
+					//double time = distance / 5;
+					int differenceY = newNodePoint.y - currentNodePoint.y;
+					int differenceX = newNodePoint.x - currentNodePoint.x;
+					final int diffIntervalX = differenceY / 5;
+					final int diffIntervalY = differenceX / 5;
+					Timer timer = new Timer(1, new ActionListener() {
+			                @Override
+			                public void actionPerformed(ActionEvent e) {
+			                	int startX = listComponents[currentPlayerID + 1].getX();
+			                	int startY = listComponents[currentPlayerID + 1].getY();
+			                	listComponents[1].setLocation(startX + diffIntervalX, startY + diffIntervalY);
+			                    listComponents[1].repaint();
+			                    Test.printf("LEL");
+			                }
+			         });
+					 timer.setRepeats(false);
+			         timer.setCoalesce(true);
+			         timer.start();
+			         try {
+						Thread.sleep(5);
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+			         timer.stop();
+					*/
+					
 					for(Component b : listComponents)
 		       	 	{
 						layeredPane.remove(b);
