@@ -1,5 +1,4 @@
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,7 +7,6 @@ import java.util.Random;
 
 /**
  * TO DO LIST:
- * 
  * MAKE GUI CLASS MORE READABLE
    //in the withinNodeRegion method - 14 is hard coded when using pythagoras - either use alternative OR scale this 14 using the map somehow
    //make sure detectives don't overlap each other
@@ -19,7 +17,25 @@ import java.util.Random;
    //get double and special move to work and implement them
    //make new gui icons etc and use them
    //implement load and save game
+   //what to do when players run out of tickets
+   //animation between nodes
+   //custom number of detectives
    //SORT SCALING PROPERLY
+   //Mr X tickets - get form pile
+    * 
+   IMAGES NEEDED:
+	//image for new button
+	//image for load button
+	//image for save button
+	//way of representing current player label
+	//way of representing next player label
+	//image for mr x tab
+	//image for detective tab
+	//image for mr x move log tab
+	//image for tabbed panes
+	//image for whole background
+    * 
+    * 
  */
 
 /**
