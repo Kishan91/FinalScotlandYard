@@ -8,6 +8,8 @@ import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import javax.imageio.*;
+
+
 import java.awt.event.MouseMotionListener;
 
 public class GUI extends GameVisualiser implements ActionListener, MouseListener, MouseMotionListener  {
@@ -30,6 +32,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 	private BufferedImage mousecursor;
 	boolean flag = false;
 	//enum playerType to distinguish between player types
+	int currentRound = 1;
 	enum playerType { Detective, MrX }
 	
 	protected customVisualisable customVisualiser;
@@ -394,7 +397,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		{
 			usedMovesTotal = usedMovesTotal + visualisable.getMoveList(ID).size();
 		}
-		int currentRound = 1;
+		currentRound = 1;
 		if(usedMovesTotal == 0) currentRound = 1;
 		else{
 			currentRound = usedMovesTotal / (playerVisualisable.getMrXIdList().size() + playerVisualisable.getDetectiveIdList().size()) + 1;
@@ -671,12 +674,13 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 	        	 }
 	        	 //repaints the layeredpane
         		 layeredPane.repaint();
+        		//sets the currentPlayerID to 0
+	        	 currentPlayerID = 0;
         		 //displays all the players
 	        	 displayPlayers();
 	        	 //shows the Mr X tab
 	        	 tabbedPane.setSelectedIndex(0);
-	        	 //sets the currentPlayerID to 0
-	        	 currentPlayerID = 0;
+	        	 
 	        	 window.setVisible(true);
 	         }          
 		});
@@ -779,22 +783,26 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 			{
 				//give the use the option to select the transport type
 				ticketType = transportSelection(ticketType, newNode);
-				//get the next player to move and stores it in a temp variable
-				tempPlayerID = visualisable.getNextPlayerToMove();
-				//moves the player - returns true if it is successful, otherwise returns false
-				movePlayer = controllable.movePlayer(currentPlayerID, newNode, ticketType);
-				//if true
-				if(movePlayer == true)
+				if(ticketType != null)
 				{
-					repaintPlayersLabels(tempPlayerID);
-		  		 	if(visualisable.isGameOver())
-		   		 	{   		 	
-		  		 		int winnerPlayerID = visualisable.getWinningPlayerId();
-			   		 	String winner = null;
-			   		 	if(winnerPlayerID == 0) showMrXWinner(winner);
-			   		 	else showDetectiveWinner(winner, winnerPlayerID);
-			   		}
-				} else JOptionPane.showMessageDialog(null, "Invalid move" ,"Player move", JOptionPane.ERROR_MESSAGE);
+					//get the next player to move and stores it in a temp variable
+					tempPlayerID = visualisable.getNextPlayerToMove();
+					//moves the player - returns true if it is successful, otherwise returns false
+					movePlayer = controllable.movePlayer(currentPlayerID, newNode, ticketType);
+					//if true
+					if(movePlayer == true)
+					{
+						repaintPlayersLabels(tempPlayerID);
+			  		 	if(visualisable.isGameOver())
+			   		 	{   		 	
+			  		 		int winnerPlayerID = visualisable.getWinningPlayerId();
+				   		 	String winner = null;
+				   		 	if(winnerPlayerID == 0) showMrXWinner(winner);
+				   		 	else showDetectiveWinner(winner, winnerPlayerID);
+				   		}
+					} else JOptionPane.showMessageDialog(null, "Invalid move" ,"Player move", JOptionPane.ERROR_MESSAGE);
+				}
+				
 			}
 			//if newNode is -2, there are no possible moves to move so skip the players go
 			else if (newNode == -2){
@@ -819,14 +827,24 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 	
 	private Initialisable.TicketType transportSelection(Initialisable.TicketType ticketType, Integer newNode)
 	{
-		Object[] possibilities = {"Taxi", "Bus", "Train","Special move", "Double move"};
+		
+		Object[] possibilities = new Object[5];
+		possibilities[0] = "Taxi";
+		possibilities[1] = "Bus";
+		possibilities[2] = "Underground";
+		if(playerVisualisable.getMrXIdList().contains(currentPlayerID))
+		{
+			possibilities[3] = "Secret move";
+			possibilities[4] = "Double move";
+		}
+		
 		String s = (String)JOptionPane.showInputDialog(window,"Pick a transport method - " + newNode, "Transport selection",
 	            JOptionPane.PLAIN_MESSAGE, null , possibilities, "Taxi");
 		//gets the answer from the dialog box and sets the ticket type accordingly
 		if(s == "Train") ticketType = Initialisable.TicketType.Underground;
 		else if (s == "Bus") ticketType = Initialisable.TicketType.Bus;
 		else if (s == "Taxi") ticketType = Initialisable.TicketType.Taxi;
-		else if (s == "Special move") ticketType = Initialisable.TicketType.SecretMove;
+		else if (s == "Secret move") ticketType = Initialisable.TicketType.SecretMove;
 		else if (s == "Double move") ticketType = Initialisable.TicketType.DoubleMove;
 		return ticketType;
 	}

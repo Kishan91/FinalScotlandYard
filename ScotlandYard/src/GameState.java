@@ -9,16 +9,14 @@ import java.util.Random;
 import javax.swing.JOptionPane;
 
 /**
- * TO DO LIST:
-   //make sure detectives don't overlap each other
-   //get double and special move to work and implement them
+ * TO DO LIST: Saturday
+   //get double move to work
+   //set visibility of mr x on map 
+   //BUG - win game - MR X ROUND NUMBER NOT UPDATING
    //make new gui icons etc and use them
    //implement load and save game
    //animation between nodes - http://zetcode.com/tutorials/javagamestutorial/animation/ < -- LOOK AT THIS - EXTRA
-   //Error changing number of detectives at start
-   //set visibility of mr x on map 
-   //BUG - win game - MR X ROUND NUMBER NOT UPDATING
-    * 
+  
    DONE
    //custom number of detectives -- DONE!
    //Mr X tickets - get from pile -- DONE
@@ -26,10 +24,16 @@ import javax.swing.JOptionPane;
    //custom interface stuff only works if there is a -i argument when running
    //scaling font of current and next player labels
    //Shows current round
-   //movePlayer works - 14 is hardcoded
+   //movePlayer works - 14 is hardcoded - still works cba
    //win state if detectives and mr x overlap
    //what happens if mr x can only move to 3 places with taxi tickets BUT he has no taxi tickets left
    //SORT SCALING PROPERLY - WORKS FOR 1280 x 800 and upwards
+   //sorted out newgame bug + dialog box cancel bug
+   //make sure detectives don't overlap each other
+   //secret move works
+   
+   NOT SOLVABLE
+   //Error changing number of detectives at start
    *
    IMAGES NEEDED:
 	//image for new button
@@ -75,7 +79,6 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
     //graph file
     private Graph graph;
     List<Integer> visibleTurns = new ArrayList<Integer>(Arrays.asList(3,8,13,18));
-    private List<Boolean> skipPlayers = new ArrayList<Boolean>();
     
 	/**
 	 * Variable that will hold the filename for the map
@@ -118,6 +121,7 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 		for(int i = 1; i <= numberOfDetectives; i++)
 		{
 			makeDetective(ID, idArray, i);
+			
 		}
 		
 		//splits pos.txt file
@@ -154,7 +158,6 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 		mrXIdList.add(0);
 		//stores the station type for the node Mr X is currently on
 		setStationType(mrX);
-		skipPlayers.add(false);
 	}
 	
 	//makes Detective object
@@ -187,7 +190,6 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 		listDetectives.add(temp);
 		//adds Detective ID to list of Detective ID's
 		detectiveIdList.add(i);
-		skipPlayers.add(false);
 	}
 	
 	//splits pos.txt file into strings where each string is a line in pos.txt - here you can access node i by accessing index i in the array
@@ -425,6 +427,7 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 						//if there is a match in this "if clause" i.e. if the move is valid given the player's tickets, the tickets are updated and check remains true
 						check = checkValidDetectiveTickets(check, player, mrXPlayer, ticketType);
 						//if check is true afterwards -- the player has the number of tickets available
+						check = checkPositionNotOccupied(check, targetNodeId);
 						if(check == true)
 						{
 							setNextPlayer((Player) player, targetNodeId);
@@ -455,6 +458,18 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 			}
 		}
 		//returns final answer
+		return check;
+	}
+
+	private boolean checkPositionNotOccupied(boolean check, Integer targetNodeId)
+	{
+		for(Detective detective : listDetectives)
+		{
+			if(detective.getPosition().equals(targetNodeId))
+			{
+				check = false;
+			}
+		}
 		return check;
 	}
 	
@@ -525,7 +540,7 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 		} else if (type1 == TicketType.Underground && type2 == Edge.EdgeType.Underground)
 		{
 			check = true;
-		}
+		} else if(type1 == TicketType.SecretMove) check = true;
 		//otherwise false is returned
 		return check;
 	}
