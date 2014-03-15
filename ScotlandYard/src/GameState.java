@@ -15,9 +15,14 @@ import javax.swing.JOptionPane;
    //BUG - win game - MR X ROUND NUMBER NOT UPDATING
    //make new gui icons etc and use them
    //implement load and save game
+
+   TO DO LIST: Sunday
+   //Make code dry, 30 lines per method, 80 characters per line, improve variable and function names if need be
+   //Make a list of all references if used + UNDERSTAND all of code before submission
    //animation between nodes - http://zetcode.com/tutorials/javagamestutorial/animation/ < -- LOOK AT THIS - EXTRA
+   //other extensions if bothered
   
-   DONE
+   DONE: Friday
    //custom number of detectives -- DONE!
    //Mr X tickets - get from pile -- DONE
    //what to do when players run out of tickets -- DONE
@@ -36,6 +41,7 @@ import javax.swing.JOptionPane;
    //Error changing number of detectives at start
    *
    IMAGES NEEDED:
+    //HAS to be somewhat similar to current layout -- pain to redo all of setLocation completely for every component
 	//image for new button
 	//image for load button
 	//image for save button
@@ -46,7 +52,6 @@ import javax.swing.JOptionPane;
 	//image for mr x move log tab
 	//image for tabbed panes
 	//image for whole background
-	//improve drawPlayer function -- draw all components initially, then have a placePlayer function that updates locations
     * 
     * 
  */
