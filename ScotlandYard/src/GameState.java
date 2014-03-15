@@ -2,27 +2,34 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import javax.swing.JOptionPane;
+
 /**
  * TO DO LIST:
- * MAKE GUI CLASS MORE READABLE
-   //in the withinNodeRegion method - 14 is hard coded when using pythagoras - either use alternative OR scale this 14 using the map somehow
    //make sure detectives don't overlap each other
-   //win state if detectives and mr x overlap
-   //set visibility of mr x on map 
-   //mr x move list
-   //scaling font of current and next player labels
    //get double and special move to work and implement them
    //make new gui icons etc and use them
    //implement load and save game
-   //what to do when players run out of tickets
-   //animation between nodes
-   //custom number of detectives -- DONE!
-   //SORT SCALING PROPERLY
-   //Mr X tickets - get form pile
+   //animation between nodes - http://zetcode.com/tutorials/javagamestutorial/animation/ < -- LOOK AT THIS - EXTRA
+   //Error changing number of detectives at start
+   //set visibility of mr x on map 
     * 
+   DONE
+   //custom number of detectives -- DONE!
+   //Mr X tickets - get from pile -- DONE
+   //what to do when players run out of tickets -- DONE
+   //custom interface stuff only works if there is a -i argument when running
+   //scaling font of current and next player labels
+   //Shows current round
+   //movePlayer works - 14 is hardcoded
+   //win state if detectives and mr x overlap
+   //what happens if mr x can only move to 3 places with taxi tickets BUT he has no taxi tickets left
+   //SORT SCALING PROPERLY - WORKS FOR 1280 x 800 and upwards
+   *
    IMAGES NEEDED:
 	//image for new button
 	//image for load button
@@ -63,8 +70,11 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
     private int currentPlayerID;
     //current game turn
     private int currentTurn = 1;
+    private int winningPlayer = -1;
     //graph file
     private Graph graph;
+    List<Integer> visibleTurns = new ArrayList<Integer>(Arrays.asList(3,8,13,18));
+    private List<Boolean> skipPlayers = new ArrayList<Boolean>();
     
 	/**
 	 * Variable that will hold the filename for the map
@@ -143,6 +153,7 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 		mrXIdList.add(0);
 		//stores the station type for the node Mr X is currently on
 		setStationType(mrX);
+		skipPlayers.add(false);
 	}
 	
 	//makes Detective object
@@ -175,6 +186,7 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 		listDetectives.add(temp);
 		//adds Detective ID to list of Detective ID's
 		detectiveIdList.add(i);
+		skipPlayers.add(false);
 	}
 	
 	//splits pos.txt file into strings where each string is a line in pos.txt - here you can access node i by accessing index i in the array
@@ -384,15 +396,13 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 
 	//given a playerID, targetNodeID and ticketType, the player is moved
 	@Override
-	public Boolean movePlayer(Integer playerId, Integer targetNodeId,
-			TicketType ticketType) {
+	public Boolean movePlayer(Integer playerId, Integer targetNodeId, TicketType ticketType) {
 		//check initially to false
 		boolean check = false;
 		//gets the currentNode for the given player -- given his ID
 		Integer currentNode = getNodeId(playerId);
 		//gets the player given the player ID
 		Player currentPlayer = getPlayerFromId(playerId);
-		
 		//goes through all the edges the player can possibly transverse
 		for(Edge a : currentPlayer.getNodeNeighbours())
 		{
@@ -410,55 +420,91 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 						Detective player = (Detective) currentPlayer;
 						//set check initially to true
 						check = true;
+						MrX mrXPlayer = (MrX) getPlayerFromId(0);
 						//if there is a match in this "if clause" i.e. if the move is valid given the player's tickets, the tickets are updated and check remains true
-						if(ticketType == TicketType.Bus && player.bus.size() > 0) player.bus.remove(player.bus.size() - 1);
-						else if(ticketType == TicketType.Taxi && player.taxi.size() > 0) player.taxi.remove(player.taxi.size() - 1);
-						else if(ticketType == TicketType.Underground && player.tube.size() > 0) player.tube.remove(player.tube.size() - 1);
-						else if (ticketType == TicketType.SecretMove && player.Ssecret.size() > 0) player.Ssecret.remove(player.Ssecret.size() - 1);
-						else if (ticketType == TicketType.DoubleMove && player.Sdouble.size() > 0) player.Sdouble.remove(player.Sdouble.size() - 1);
-						//otherwise check is set to false
-						else check = false;
+						check = checkValidDetectiveTickets(check, player, mrXPlayer, ticketType);
 						//if check is true afterwards -- the player has the number of tickets available
 						if(check == true)
 						{
-							player.setPosition(targetNodeId);
-							currentPlayerID = getNextPlayerToMove();
-							currentTurn++;
-							player.setNodeNeighbours(graph.edges(targetNodeId.toString()));
-							setStationType(player);
+							setNextPlayer((Player) player, targetNodeId);
 						} else {
-							//move is not possible - so return false
-							return false;
+							if((getStationType(playerId).equals("Taxi") && player.taxi.size() == 0)
+								|| (getStationType(playerId).equals("Bus and Taxi") && player.bus.size() == 0 && player.taxi.size() == 0))
+							{
+								noPlacesToMoveTo(player, ticketType);
+								return true;
+							}
+						//move is not possible - so return false
+						return false;
 						}
 					//if the player is a Mr X player - we typecast the player as a Mr X object
 					} else {
 						//same kind of stuff as before
 						MrX player = (MrX) currentPlayer;
 						check = true;
-						if(ticketType == TicketType.Bus && player.bus.size() > 0) player.bus.remove(player.bus.size() - 1);
-						else if(ticketType == TicketType.Taxi && player.taxi.size() > 0) player.taxi.remove(player.taxi.size() - 1);
-						else if(ticketType == TicketType.Underground && player.tube.size() > 0) player.tube.remove(player.tube.size() - 1);
-						else if (ticketType == TicketType.SecretMove && player.Ssecret.size() > 0) player.Ssecret.remove(player.Ssecret.size() - 1);
-						else if (ticketType == TicketType.DoubleMove && player.Sdouble.size() > 0) player.Sdouble.remove(player.Sdouble.size() - 1);
-						else check = false;
+						check = checkValidMrXTickets(check, player, ticketType);
 						if(check == true)
 						{
-							player.setPosition(targetNodeId);
-							currentPlayerID = getNextPlayerToMove();
-							currentTurn++;
-							player.setNodeNeighbours(graph.edges(targetNodeId.toString()));
-							setStationType(player);
+							setNextPlayer((Player) player, targetNodeId);
 						} else {
 							return false;
 						}
 					}
 				}
-				
 			}
-		
 		}
 		//returns final answer
 		return check;
+	}
+	
+	private void noPlacesToMoveTo(Detective player, TicketType ticketType)
+	{
+		JOptionPane.showMessageDialog(null,"No possible places to move to","Player move", JOptionPane.ERROR_MESSAGE);
+		player.used.add(ticketType);
+		currentPlayerID = getNextPlayerToMove();
+		currentTurn++;
+	}
+	
+	private boolean checkValidMrXTickets(boolean check, MrX player, TicketType ticketType)
+	{
+		if(ticketType == TicketType.Bus && player.bus.size() > 0) player.bus.remove(player.bus.size() - 1);
+		else if(ticketType == TicketType.Taxi && player.taxi.size() > 0) player.taxi.remove(player.taxi.size() - 1);
+		else if(ticketType == TicketType.Underground && player.tube.size() > 0) player.tube.remove(player.tube.size() - 1);
+		else if (ticketType == TicketType.SecretMove && player.Ssecret.size() > 0) player.Ssecret.remove(player.Ssecret.size() - 1);
+		else if (ticketType == TicketType.DoubleMove && player.Sdouble.size() > 0) player.Sdouble.remove(player.Sdouble.size() - 1);
+		else check = false;
+		player.used.add(ticketType);
+		return check;
+	}
+	
+	private boolean checkValidDetectiveTickets(boolean check, Detective player, MrX mrXPlayer, TicketType ticketType)
+	{
+		if(ticketType == TicketType.Bus && player.bus.size() > 0)
+		{
+			player.bus.remove(player.bus.size() - 1);
+			mrXPlayer.bus.add(ticketType);
+		}
+		else if(ticketType == TicketType.Taxi && player.taxi.size() > 0){
+			player.taxi.remove(player.taxi.size() - 1);
+			mrXPlayer.taxi.add(ticketType);
+		}
+		else if(ticketType == TicketType.Underground && player.tube.size() > 0){
+			player.tube.remove(player.tube.size() - 1);
+			mrXPlayer.tube.add(ticketType);
+		}
+		//otherwise check is set to false
+		else check = false;
+		player.used.add(ticketType);
+		return check;
+	}
+	
+	private void setNextPlayer(Player player, Integer targetNodeId)
+	{
+		player.setPosition(targetNodeId);
+		currentPlayerID = getNextPlayerToMove();
+		currentTurn++;
+		player.setNodeNeighbours(graph.edges(targetNodeId.toString()));
+		setStationType(player);
 	}
 
 	//checks if edge type and ticket type match
@@ -506,6 +552,8 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 				newNode = Integer.parseInt(connectedNode);
 			}
 		}
+		//if no possible moves to go to, return -2
+		if(nodeNeighbours.size() == 0) return -2;
 		return newNode;
 	}
 
@@ -518,17 +566,34 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 			return check;
 	}
 	
-	//IMPLEMENT LATER
+
 	@Override
 	public Integer getWinningPlayerId() {
-		// TODO Auto-generated method stub
-		return null;
+		return winningPlayer;
 	}
 	
-	//IMPLEMENT LATER
+
 	public Boolean isGameOver() {
-		// TODO Auto-generated method stub
-		return null;
+		boolean gameOver = false;
+		int totalNumber = listMrX.size() + listDetectives.size();
+		int roundNumber = (int) Math.ceil((double)currentTurn / totalNumber);
+		for(MrX player : listMrX)
+		{
+			for(Detective d : listDetectives)
+			{
+				if(d.getPosition().equals(player.getPosition()))
+				{
+					winningPlayer = d.getID();
+					gameOver = true;
+				}
+			}
+		}
+		if(roundNumber == 23)
+		{
+			winningPlayer = mrXIdList.get(0);
+			gameOver = true;
+		}
+		return gameOver;
 	}
 	
 	//IMPLEMENT LATER
@@ -538,49 +603,45 @@ public class GameState implements MapVisualisable, Initialisable, PlayerVisualis
 		return null;
 	}
 
+	//IMPLEMENT LATER
 	@Override
 	public Boolean loadGame(String filename) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	//THIS DOESN'T FUCKING WORK WTF WTF WTF --- FIX FIX FIX
-		@Override
+	@Override
 	public List<TicketType> getMoveList(Integer playerId) {
-		List<TicketType> usedMoves = null;
-		for(MrX a : listMrX)
-		{
-			if(a.getID().equals(playerId))
-			{
-				usedMoves =  a.used;
-			}
-		}
-		for(Detective a : listDetectives)
-		{
-			if(a.getID().equals(playerId))
-			{
-				usedMoves = a.used;
-			}
-		}
-		return usedMoves;
+		Player player = getPlayerFromId(playerId);
+		return player.used;
 	}
 
 	//checks if a player is visible, given -- USE FIX LATER
 	@Override
 	public Boolean isVisible(Integer playerId) {
 		boolean visible = false;
+
+	//	Test.printf("ROUND" + roundNumber);
+		/*
 		if (detectiveIdList.contains(playerId)) visible = true;
 		else {
 			for(MrX a : listMrX)
 			{			
-				if(a.getID().equals(playerId)) if(currentTurn == 3 || currentTurn == 8 || currentTurn == 13 || currentTurn == 24)
+				
+				//if current player is a detective && it is a visible turn - display Mr X
+				
+				
+				if(a.getID().equals(playerId) && currentPlayerID != 0 && visibleTurns.contains(roundNumber))
 				{
 					a.setVisibile(true);
-				} else {
+					visible = true;z
+				} else{
 					a.setVisibile(false);
+					visible = false;
 				}
 			}
 		}
+		*/
 		return visible;
 	}
 }

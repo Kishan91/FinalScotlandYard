@@ -11,7 +11,7 @@ public abstract class GameVisualiser implements Runnable
 	protected Visualisable visualisable;
 	protected Controllable controllable;
 	protected Initialisable initialisable;
-	protected customVisualisable customVisualiser;
+	
 	
 	/**
 	 * Abstract run function from the Runnable interface. This is
@@ -71,9 +71,6 @@ public abstract class GameVisualiser implements Runnable
 		initialisable = a;
 	}
 	
-	public void registerCustomVisualiser(customVisualisable a)
-	{
-		customVisualiser = a;
-	}
+
 	
 }
