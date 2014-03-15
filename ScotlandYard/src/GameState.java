@@ -17,6 +17,7 @@ import javax.swing.JOptionPane;
    //animation between nodes - http://zetcode.com/tutorials/javagamestutorial/animation/ < -- LOOK AT THIS - EXTRA
    //Error changing number of detectives at start
    //set visibility of mr x on map 
+   //BUG - win game - MR X ROUND NUMBER NOT UPDATING
     * 
    DONE
    //custom number of detectives -- DONE!
