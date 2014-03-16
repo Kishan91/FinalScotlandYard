@@ -334,8 +334,7 @@ public class GameState implements MapVisualisable, Initialisable,
 	private void setStationType(Player player) {
 		//
 		List<TicketType> ticketTypes = new ArrayList<TicketType>();
-		// gets all the possible edges the player can transverse given their
-		// current node and loops through them
+		// gets all the possible edges the player can transverse given their current node and loops through them
 		for (Edge a : player.getNodeNeighbours()) {
 			// adds each edge type to the ticketTypes list
 			if (a.type().equals(Edge.EdgeType.Bus))
@@ -345,7 +344,6 @@ public class GameState implements MapVisualisable, Initialisable,
 			else if (a.type().equals(Edge.EdgeType.Underground))
 				ticketTypes.add(TicketType.Underground);
 		}
-
 		/*
 		 * After adding all the ticketTypes for each edge, if the array contains
 		 * a bus and underground combination - it is a taxi/bus/underground
@@ -362,8 +360,7 @@ public class GameState implements MapVisualisable, Initialisable,
 			player.setStationType(Player.currentStationType.Taxi);
 	}
 
-	// given a playerID - gets the required player and gets the station type,
-	// given the node they are currently on - as a String
+	// given a playerID - gets the required player and gets the station type, given the node they are currently on - as a String
 	public String getStationType(Integer playerId) {
 		// stores final result
 		String result = null;
@@ -380,9 +377,7 @@ public class GameState implements MapVisualisable, Initialisable,
 		return result;
 	}
 
-	// given a playerID - gets the required player, gets the possible edges they
-	// can transverse, and returns all the connected nodes from the current
-	// player node
+	// given a playerID - gets the required player, gets the possible edges they can transverse, and returns all the connected nodes from the current player node
 	public List<String> getNodeNeighbours(Integer playerId) {
 		Player player = getPlayerFromId(playerId);
 		List<String> nodeNeighbours = new ArrayList<String>();
@@ -512,6 +507,7 @@ public class GameState implements MapVisualisable, Initialisable,
 		return check;
 	}
 
+	//checks if a detective is already at the given position
 	private boolean checkPositionNotOccupied(boolean check, Integer targetNodeId) {
 		for (Detective detective : listDetectives) {
 			if (detective.getPosition().equals(targetNodeId)) {
@@ -521,6 +517,7 @@ public class GameState implements MapVisualisable, Initialisable,
 		return check;
 	}
 
+	//function called if no places detective can move to -- increments currentPlayerID and currentTurn
 	private void noPlacesToMoveTo(Detective player) {
 		JOptionPane.showMessageDialog(null, "No possible places to move to",
 				"Player move", JOptionPane.ERROR_MESSAGE);
@@ -528,6 +525,7 @@ public class GameState implements MapVisualisable, Initialisable,
 		currentTurn++;
 	}
 
+	//checks if move is valid given the number of tickets mr X has
 	private boolean checkValidMrXTickets(boolean check, MrX player,
 			TicketType ticketType) {
 		if (ticketType == TicketType.Bus && player.bus.size() > 0){
@@ -554,6 +552,7 @@ public class GameState implements MapVisualisable, Initialisable,
 		return check;
 	}
 
+	//checks if move is valid given the number of tickets the detective has
 	private boolean checkValidDetectiveTickets(boolean check, Detective player,
 			MrX mrXPlayer, TicketType ticketType) {
 		if (ticketType == TicketType.Bus && player.bus.size() > 0) {
@@ -577,6 +576,7 @@ public class GameState implements MapVisualisable, Initialisable,
 		return check;
 	}
 
+	//setsNextPlayer
 	private void setNextPlayer(Player player, Integer targetNodeId, boolean doubleMoveFlag) {
 		player.setPosition(targetNodeId);
 		if(!doubleMoveFlag)

@@ -920,7 +920,6 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 					movePlayer = controllable.movePlayer(currentPlayerID, newNode, ticketType);
 					//if true
 					
-					Test.printf(movePlayer);
 					if(movePlayer == true)
 					{
 						/*
