@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
  * TO DO LIST: Saturday
  //get double move to work
  //set visibility of mr x on map 
- //BUG - win game - MR X ROUND NUMBER NOT UPDATING
+ //BUG - win game - MR X ROUND NUMBER NOT UPDATING -- it works fine now BUT round number is showing incorrectly sometimes in GUI
  //make new gui icons etc and use them
  //implement load and save game
 
