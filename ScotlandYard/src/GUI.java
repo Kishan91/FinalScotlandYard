@@ -187,61 +187,64 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 	//displays players on the screen
 	private void displayPlayers()
 	{
-		//gets Mr X ID list and Detective ID list using playerVisualisable interface
-		ArrayList<Integer> mrXIdList = (ArrayList<Integer>) playerVisualisable.getMrXIdList();
-		ArrayList<Integer> detectiveIdList = (ArrayList<Integer>) playerVisualisable.getDetectiveIdList();
-		
-		//stores the node each player is on during the for loops
-		Integer node;
-		
-		//use i here because each component needs a unique ID when adding it to the layeredPane
-		int i = 1;
-		
-		//loops through Mr X ID's
-		for(Integer ID : mrXIdList)
+		if(!visualisable.isGameOver())
 		{
-			//gets node for the current player
-			node = playerVisualisable.getNodeId(ID);
-	
-			//makes a MrX JLabel
-			JLabel MrX = drawNode(node, playerType.MrX);
-			//sets size of jlabel to be 30px by 30px
-			MrX.setSize(30,30);
-			//adds label to layered pane with ID i
-			layeredPane.add(MrX, i);
-			//adds the label to layer 1 on the layered pane
-			layeredPane.setLayer(MrX, 1);
-			i++;
-		}
-		for(Integer ID : detectiveIdList)
-		{
-			//gets node for the current player
-			node = playerVisualisable.getNodeId(ID);
-			//makes a Detective JLabel
-			JLabel Detective = drawNode(node, playerType.Detective);
-			//sets size of jlabel to be 30px by 30px
-			Detective.setSize(30,30);
-			//adds label to layered pane with ID i
-			layeredPane.add(Detective, i);
-			//adds the label to layer 1 on the layered pane
-			layeredPane.setLayer(Detective, 1);
-			i++;
-		}
-		//displays current player label
-		currentPlayerLabel();
-		//displays next player label
-		nextPlayerLabel();
-		//displays mrX panel and detective panels in tabbed pane
-		currentRound();
-		int index = mrXPanel();
-		detectivePanels(index);
-		//displays Mr X move log
-		mrXMoveLog();
-		if(flag == true)
-		{
+			//gets Mr X ID list and Detective ID list using playerVisualisable interface
+			ArrayList<Integer> mrXIdList = (ArrayList<Integer>) playerVisualisable.getMrXIdList();
+			ArrayList<Integer> detectiveIdList = (ArrayList<Integer>) playerVisualisable.getDetectiveIdList();
 			
-			//draws highlighting around the moves that can be moved to from the current node by the current player
-			drawHighlights();
+			//stores the node each player is on during the for loops
+			Integer node;
+			
+			//use i here because each component needs a unique ID when adding it to the layeredPane
+			int i = 1;
+			
+			//loops through Mr X ID's
+			for(Integer ID : mrXIdList)
+			{
+				//gets node for the current player
+				node = playerVisualisable.getNodeId(ID);
+		
+				//makes a MrX JLabel
+				JLabel MrX = drawNode(node, playerType.MrX);
+				//sets size of jlabel to be 30px by 30px
+				MrX.setSize(30,30);
+				//adds label to layered pane with ID i
+				layeredPane.add(MrX, i);
+				//adds the label to layer 1 on the layered pane
+				layeredPane.setLayer(MrX, 1);
+				i++;
+			}
+			for(Integer ID : detectiveIdList)
+			{
+				//gets node for the current player
+				node = playerVisualisable.getNodeId(ID);
+				//makes a Detective JLabel
+				JLabel Detective = drawNode(node, playerType.Detective);
+				//sets size of jlabel to be 30px by 30px
+				Detective.setSize(30,30);
+				//adds label to layered pane with ID i
+				layeredPane.add(Detective, i);
+				//adds the label to layer 1 on the layered pane
+				layeredPane.setLayer(Detective, 1);
+				i++;
+			}
+			//displays current player label
+			currentPlayerLabel();
+			//displays next player label
+			nextPlayerLabel();
+			//displays mrX panel and detective panels in tabbed pane
+			currentRound();
+			int index = mrXPanel();
+			detectivePanels(index);
+			//displays Mr X move log
+			mrXMoveLog();
+			if(flag == true)
+			{
+				
+				//draws highlighting around the moves that can be moved to from the current node by the current player
+				drawHighlights();
+			}
 		}
 	}
 	
@@ -800,7 +803,10 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 				   		 	if(winnerPlayerID == 0) showMrXWinner(winner);
 				   		 	else showDetectiveWinner(winner, winnerPlayerID);
 				   		}
-					} else JOptionPane.showMessageDialog(null, "Invalid move" ,"Player move", JOptionPane.ERROR_MESSAGE);
+					} else{
+						JOptionPane.showMessageDialog(null, "Invalid move" ,"Player move", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
 				}
 				
 			}

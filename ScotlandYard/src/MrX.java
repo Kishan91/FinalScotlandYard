@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-
 public class MrX extends Player {
 	//stores visibility of Mr X
 	private boolean visible = false;
