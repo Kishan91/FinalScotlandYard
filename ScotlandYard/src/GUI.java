@@ -631,7 +631,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		//creates a movesUsed JPanel and sets the size
 		JPanel movesUsed = new JPanel();
 		movesUsed.setLayout(null);
-		movesUsed.setSize((int) (window.getContentPane().getWidth() - resizedImageDimensions.getWidth() - 20), 300);
+		movesUsed.setSize((int) (window.getContentPane().getWidth() - resizedImageDimensions.getWidth() - 20), (int) (350 * imageScale()));
 		//gets the list of used moves
 		ArrayList<Initialisable.TicketType> usedMoves = (ArrayList<Initialisable.TicketType>) visualisable.getMoveList(0);
 		//j acts as a counter variable here
@@ -671,7 +671,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 			move.setIcon(new ImageIcon(iconToDisplay));
 			move.setForeground(Color.LIGHT_GRAY);
 			move.setOpaque(true);
-			if((5 + (30 * (i - temp))) > 280)
+			if((5 + (30 * (i - temp))) > 300 * imageScale())
 			{
 				temp = i;
 				if(j == 0) x = (int) (window.getContentPane().getWidth() - resizedImageDimensions.getWidth() - 20) / 3;
@@ -683,7 +683,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 				
 			}
 			move.setSize(200, 20);
-			move.setLocation(x, 5 + (30 * (i - temp)));
+			move.setLocation(x, 5 + (20 * (i - temp)));
 			move.setVisible(true);
 			movesUsed.add(move);
 		}
@@ -823,12 +823,17 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 	        	    int returnVal = chooser.showOpenDialog(window);
 	        	    if(returnVal == JFileChooser.APPROVE_OPTION) {
 	        	    	controllable.loadGame(chooser.getSelectedFile().getAbsolutePath());
-	        	    	if(visualisable.getNextPlayerToMove() == 0) currentPlayerID = playerVisualisable.getDetectiveIdList().size();
-	        	    	else currentPlayerID = visualisable.getNextPlayerToMove() - 1;
+	        	    	getCurrentPlayerID();
 	        	    	repaint(currentPlayerID);
 	        	    }
 	         }          
 		});
+	}
+	
+	private void getCurrentPlayerID()
+	{
+		if(visualisable.getNextPlayerToMove() == 0) currentPlayerID = playerVisualisable.getDetectiveIdList().size();
+    	else currentPlayerID = visualisable.getNextPlayerToMove() - 1;
 	}
 	
 	//creates and displays the save game button
@@ -1010,6 +1015,9 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		{
 			possibilities[3] = "Secret move";
 			possibilities[4] = "Double move";
+		} else {
+			possibilities[3] = " - ";
+			possibilities[4] = " - ";
 		}
 		
 		String s = (String)JOptionPane.showInputDialog(window,"Pick a transport method - " + newNode, "Transport selection",
@@ -1020,6 +1028,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		else if (s == "Taxi") ticketType = Initialisable.TicketType.Taxi;
 		else if (s == "Secret move") ticketType = Initialisable.TicketType.SecretMove;
 		else if (s == "Double move") ticketType = Initialisable.TicketType.DoubleMove;
+		else JOptionPane.showMessageDialog(null, "Invalid move" ,"Player move", JOptionPane.ERROR_MESSAGE);
 		return ticketType;
 	}
 	

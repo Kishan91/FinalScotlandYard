@@ -10,13 +10,8 @@ import java.util.Random;
 
 import javax.swing.JOptionPane;
 
-/**
- * TO DO LIST: Saturday
- //get double move to work
- //make new gui icons etc and use them
-
+/*
  TO DO LIST: Sunday
- //Make code dry, 30 lines per method, 80 characters per line, improve variable and function names if need be
  //Make a list of all references if used + UNDERSTAND all of code before submission <- can do after
 
  DONE: Friday
@@ -40,6 +35,9 @@ DONE: Saturday
  * 
 DONE: Sunday
  //implement load and save game
+ //get double move to work
+ //make new gui icons etc and use them
+ //Make code dry, 30 lines per method, 80 characters per line, improve variable and function names if need be
 
  NOT SOLVABLE
  //Error changing number of detectives at start
