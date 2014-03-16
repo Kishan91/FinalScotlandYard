@@ -441,7 +441,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		if(usedMovesTotal == 0) currentRound = 1;
 		else{
 			//calculation to work out current round
-			currentRound = (usedMovesTotal - (occurrences * 2)) / (playerVisualisable.getMrXIdList().size() + playerVisualisable.getDetectiveIdList().size()) + 1;
+			currentRound = (usedMovesTotal - occurrences) / (playerVisualisable.getMrXIdList().size() + playerVisualisable.getDetectiveIdList().size()) + 1;
 		}
 		//displays current round
 		JLabel currentRoundLabel = new JLabel("Current Round: " + currentRound);
@@ -674,15 +674,15 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 			if((5 + (30 * (i - temp))) > 280)
 			{
 				temp = i;
-				if(j == 0) x = (int) (window.getContentPane().getWidth() - resizedImageDimensions.getWidth() - 20) / 4;
+				if(j == 0) x = (int) (window.getContentPane().getWidth() - resizedImageDimensions.getWidth() - 20) / 3;
 				else{
-					x = (int) (((window.getContentPane().getWidth() - resizedImageDimensions.getWidth() - 20) / 4) + 
-							((window.getContentPane().getWidth() - resizedImageDimensions.getWidth() - 20) / 4));
+					x = (int) (((window.getContentPane().getWidth() - resizedImageDimensions.getWidth() - 20) / 3) + 
+							((window.getContentPane().getWidth() - resizedImageDimensions.getWidth() - 20) / 3));
 				}
 				j++;
 				
 			}
-			move.setSize(150, 20);
+			move.setSize(200, 20);
 			move.setLocation(x, 5 + (30 * (i - temp)));
 			move.setVisible(true);
 			movesUsed.add(move);
@@ -930,6 +930,12 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 					
 					if(movePlayer == true)
 					{
+						if(ticketType == Initialisable.TicketType.DoubleMove)
+						{
+							checkMovePlayer(movePlayer, currentPlayerID);
+						} else {
+							checkMovePlayer(movePlayer, tempPlayerID);
+						}
 						/*
 						if(ticketType == Initialisable.TicketType.SecretMove)
 						{
@@ -956,7 +962,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 							checkMovePlayer(movePlayer, tempPlayerID);
 						}
 						*/
-						checkMovePlayer(movePlayer, tempPlayerID);
+						
 					} else JOptionPane.showMessageDialog(null, "Invalid move" ,"Player move", JOptionPane.ERROR_MESSAGE);
 				}
 				

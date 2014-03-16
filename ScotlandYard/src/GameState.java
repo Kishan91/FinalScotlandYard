@@ -484,17 +484,11 @@ public class GameState implements MapVisualisable, Initialisable,
 						check = true;
 						check = checkValidMrXTickets(check, player, ticketType);
 						if (check == true) {
-							if(ticketType != TicketType.DoubleMove && ticketType != TicketType.SecretMove)
+							if(ticketType != TicketType.DoubleMove)
 							{
 								setNextPlayer((Player) player, targetNodeId, false);
-								/*
-								if(player.used.size() > 1 && player.used.get(player.used.size() - 2) == TicketType.DoubleMove){
-									Test.printf("LEL");
-									setNextPlayer((Player) player, targetNodeId, true);
-								} else {
-									setNextPlayer((Player) player, targetNodeId, false);
-								}
-								*/
+							} else {
+								setNextPlayer((Player) player, targetNodeId, true);
 							}
 						} else {
 							return false;
