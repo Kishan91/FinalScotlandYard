@@ -11,24 +11,17 @@ import javax.swing.JOptionPane;
 /**
  * TO DO LIST: Saturday
  //get double move to work
- //set visibility of mr x on map 
  //make new gui icons etc and use them
  //implement load and save game
 
-DONE: Saturday
-//BUG - win game - MR X ROUND NUMBER NOT UPDATING -- it works fine now BUT round number is showing incorrectly sometimes in GUI
- * 
-
  TO DO LIST: Sunday
  //Make code dry, 30 lines per method, 80 characters per line, improve variable and function names if need be
- //Make a list of all references if used + UNDERSTAND all of code before submission
- //animation between nodes - http://zetcode.com/tutorials/javagamestutorial/animation/ < -- LOOK AT THIS - EXTRA
- //other extensions if bothered
+ //Make a list of all references if used + UNDERSTAND all of code before submission <- can do after
 
  DONE: Friday
  //custom number of detectives -- DONE!
  //Mr X tickets - get from pile -- DONE
- //what to do when players run out of tickets -- DONE
+ //what to do when players run out of tickets -- DOxNE
  //custom interface stuff only works if there is a -i argument when running
  //scaling font of current and next player labels
  //Shows current round
@@ -39,6 +32,11 @@ DONE: Saturday
  //sorted out newgame bug + dialog box cancel bug
  //make sure detectives don't overlap each other
  //secret move works
+
+DONE: Saturday
+//BUG - win game - MR X ROUND NUMBER NOT UPDATING -- it works fine now BUT round number is showing incorrectly sometimes in GUI
+//set visibility of mr x on map 
+ * 
 
  NOT SOLVABLE
  //Error changing number of detectives at start
@@ -91,7 +89,7 @@ public class GameState implements MapVisualisable, Initialisable,
 	// graph file
 	private Graph graph;
 	private List<Integer> visibleTurns = new ArrayList<Integer>(Arrays.asList(3, 8, 13,18));
-
+	private int roundNumber;
 	/**
 	 * Variable that will hold the filename for the map
 	 */
@@ -644,8 +642,7 @@ public class GameState implements MapVisualisable, Initialisable,
 	public Boolean isGameOver() {
 		boolean gameOver = false;
 		int totalNumber = listMrX.size() + listDetectives.size();
-		int roundNumber = (int) Math.ceil((double) currentTurn / totalNumber);
-		Test.printf(roundNumber);
+		roundNumber = (int) Math.ceil((double) currentTurn / totalNumber);
 		for (MrX player : listMrX) {
 			for (Detective d : listDetectives) {
 				if (d.getPosition().equals(player.getPosition())) {
@@ -685,20 +682,21 @@ public class GameState implements MapVisualisable, Initialisable,
 	@Override
 	public Boolean isVisible(Integer playerId) {
 		boolean visible = false;
+		if (detectiveIdList.contains(playerId)) 
+			visible = true; 
+		else {
+			for(MrX a : listMrX) {
+		//if current player is a detective && it is a visible turn - display Mr X
+				if(a.getID().equals(playerId) && currentPlayerID != 0 && visibleTurns.contains(roundNumber)) { 
+					a.setVisibile(true); 
+					visible = true;
+				} else{ 
+					a.setVisibile(false); 
+					visible = false; 
+				} 
+			} 
+		}
 
-		// Test.printf("ROUND" + roundNumber);
-		/*
-		 * if (detectiveIdList.contains(playerId)) visible = true; else {
-		 * for(MrX a : listMrX) {
-		 * 
-		 * //if current player is a detective && it is a visible turn - display
-		 * Mr X
-		 * 
-		 * 
-		 * if(a.getID().equals(playerId) && currentPlayerID != 0 &&
-		 * visibleTurns.contains(roundNumber)) { a.setVisibile(true); visible =
-		 * true;z } else{ a.setVisibile(false); visible = false; } } }
-		 */
 		return visible;
 	}
 }

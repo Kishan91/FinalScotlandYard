@@ -213,6 +213,12 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 				layeredPane.add(MrX, i);
 				//adds the label to layer 1 on the layered pane
 				layeredPane.setLayer(MrX, 1);
+				if(visualisable.isVisible(0) == false)
+				{
+					MrX.setVisible(false);
+				} else {
+					MrX.setVisible(true);
+				}
 				i++;
 			}
 			for(Integer ID : detectiveIdList)
@@ -241,8 +247,6 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 			mrXMoveLog();
 			if(flag == true)
 			{
-				
-				//draws highlighting around the moves that can be moved to from the current node by the current player
 				drawHighlights();
 			}
 		}
@@ -400,7 +404,6 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		{
 			usedMovesTotal = usedMovesTotal + visualisable.getMoveList(ID).size();
 		}
-		Test.printf(usedMovesTotal);
 		currentRound = 1;
 		if(usedMovesTotal == 0) currentRound = 1;
 		else{
@@ -794,6 +797,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 					//moves the player - returns true if it is successful, otherwise returns false
 					movePlayer = controllable.movePlayer(currentPlayerID, newNode, ticketType);
 					//if true
+					
 					if(movePlayer == true)
 					{
 						repaintPlayersLabels(tempPlayerID);
