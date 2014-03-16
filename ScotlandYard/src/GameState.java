@@ -12,11 +12,12 @@ import javax.swing.JOptionPane;
  * TO DO LIST: Saturday
  //get double move to work
  //set visibility of mr x on map 
- //BUG - win game - MR X ROUND NUMBER NOT UPDATING -- it works fine now BUT round number is showing incorrectly sometimes in GUI
  //make new gui icons etc and use them
  //implement load and save game
 
-
+DONE: Saturday
+//BUG - win game - MR X ROUND NUMBER NOT UPDATING -- it works fine now BUT round number is showing incorrectly sometimes in GUI
+ * 
 
  TO DO LIST: Sunday
  //Make code dry, 30 lines per method, 80 characters per line, improve variable and function names if need be
@@ -474,6 +475,7 @@ public class GameState implements MapVisualisable, Initialisable,
 											&& player.bus.size() == 0 && player.taxi
 											.size() == 0)) {
 								noPlacesToMoveTo(player);
+								player.used.add(ticketType);
 								return true;
 								//move is not possible so return false
 							} else return false;
@@ -517,21 +519,26 @@ public class GameState implements MapVisualisable, Initialisable,
 
 	private boolean checkValidMrXTickets(boolean check, MrX player,
 			TicketType ticketType) {
-		if (ticketType == TicketType.Bus && player.bus.size() > 0)
+		if (ticketType == TicketType.Bus && player.bus.size() > 0){
 			player.bus.remove(player.bus.size() - 1);
-		else if (ticketType == TicketType.Taxi && player.taxi.size() > 0)
+			player.used.add(ticketType);
+		} else if (ticketType == TicketType.Taxi && player.taxi.size() > 0){
 			player.taxi.remove(player.taxi.size() - 1);
-		else if (ticketType == TicketType.Underground && player.tube.size() > 0)
+			player.used.add(ticketType);
+		}else if (ticketType == TicketType.Underground && player.tube.size() > 0){
 			player.tube.remove(player.tube.size() - 1);
-		else if (ticketType == TicketType.SecretMove
-				&& player.Ssecret.size() > 0)
+			player.used.add(ticketType);
+		}else if (ticketType == TicketType.SecretMove
+				&& player.Ssecret.size() > 0){
 			player.Ssecret.remove(player.Ssecret.size() - 1);
-		else if (ticketType == TicketType.DoubleMove
-				&& player.Sdouble.size() > 0)
+			player.used.add(ticketType);
+		}else if (ticketType == TicketType.DoubleMove
+				&& player.Sdouble.size() > 0){
 			player.Sdouble.remove(player.Sdouble.size() - 1);
-		else
+			player.used.add(ticketType);
+		}else{
 			check = false;
-		player.used.add(ticketType);
+		}
 		return check;
 	}
 
@@ -540,18 +547,21 @@ public class GameState implements MapVisualisable, Initialisable,
 		if (ticketType == TicketType.Bus && player.bus.size() > 0) {
 			player.bus.remove(player.bus.size() - 1);
 			mrXPlayer.bus.add(ticketType);
+			player.used.add(ticketType);
 		} else if (ticketType == TicketType.Taxi && player.taxi.size() > 0) {
 			player.taxi.remove(player.taxi.size() - 1);
 			mrXPlayer.taxi.add(ticketType);
+			player.used.add(ticketType);
 		} else if (ticketType == TicketType.Underground
 				&& player.tube.size() > 0) {
 			player.tube.remove(player.tube.size() - 1);
 			mrXPlayer.tube.add(ticketType);
+			player.used.add(ticketType);
 		}
 		// otherwise check is set to false
-		else
+		else {
 			check = false;
-		player.used.add(ticketType);
+		}
 		return check;
 	}
 

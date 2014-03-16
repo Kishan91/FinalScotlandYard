@@ -400,6 +400,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		{
 			usedMovesTotal = usedMovesTotal + visualisable.getMoveList(ID).size();
 		}
+		Test.printf(usedMovesTotal);
 		currentRound = 1;
 		if(usedMovesTotal == 0) currentRound = 1;
 		else{
@@ -847,7 +848,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		String s = (String)JOptionPane.showInputDialog(window,"Pick a transport method - " + newNode, "Transport selection",
 	            JOptionPane.PLAIN_MESSAGE, null , possibilities, "Taxi");
 		//gets the answer from the dialog box and sets the ticket type accordingly
-		if(s == "Train") ticketType = Initialisable.TicketType.Underground;
+		if(s == "Underground") ticketType = Initialisable.TicketType.Underground;
 		else if (s == "Bus") ticketType = Initialisable.TicketType.Bus;
 		else if (s == "Taxi") ticketType = Initialisable.TicketType.Taxi;
 		else if (s == "Secret move") ticketType = Initialisable.TicketType.SecretMove;
