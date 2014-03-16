@@ -34,12 +34,18 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 	private int extraH;
 	//custom mouse cursor
 	private BufferedImage mousecursor;
+	//if custom interface is enabled
 	boolean flag = false;
+	
+	
 	private boolean secretMoveFlag = false;
 	private boolean doubleMoveFlag1 = false;
 	private boolean doubleMoveFlag2 = false;
-	//enum playerType to distinguish between player types
+	
+	
+	//current game round
 	int currentRound = 1;
+	//enum playerType to distinguish between player types
 	enum playerType { Detective, MrX }
 	
 	protected customVisualisable customVisualiser;
@@ -80,20 +86,8 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		window.setPreferredSize(effectiveScreenRes);
 		window.setResizable(false);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		URL backgroundURL = this.getClass().getResource("BACKGROUND.jpg");
-		ImageIcon background = null;
-		BufferedImage backgroundBuffered = null;
-		try {
-			backgroundBuffered = ImageIO.read(backgroundURL);
-			//scales the image to be size * size
-			backgroundBuffered = resize(backgroundBuffered, effectiveScreenRes);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		//creates an imageicon out of the buffered image
-		background = new ImageIcon(backgroundBuffered);
 		
-		JLabel gameBackground = new JLabel(background);
+		JLabel gameBackground = new JLabel(setGameBackground(effectiveScreenRes));
 		gameBackground.setSize(effectiveScreenRes);
 	
 		//makes a layeredPane which is the effective screen size
@@ -101,6 +95,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		layeredPane.setPreferredSize(effectiveScreenRes);
 		//adds the layeredpane to the window jframe
 		window.add(layeredPane);
+		//adds game background to layeredpane
 		layeredPane.add(gameBackground, 0);
 		
 		//returns a JLabel with the map size set
@@ -122,6 +117,24 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		//this gives height of the program title bar and the taskbar above the window if one exists - used later in the mouseMoved and mouseClicked methods
 		extraH = screenSize.height - window.getContentPane().getHeight() - bottom;
 	}
+	
+	private ImageIcon setGameBackground(Dimension effectiveScreenRes)
+	{
+		URL backgroundURL = this.getClass().getResource("BACKGROUND.jpg");
+		ImageIcon background = null;
+		BufferedImage backgroundBuffered = null;
+		try {
+			backgroundBuffered = ImageIO.read(backgroundURL);
+			//scales the image to be size * size
+			backgroundBuffered = resize(backgroundBuffered, effectiveScreenRes);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		//creates an imageicon out of the buffered image
+		background = new ImageIcon(backgroundBuffered);
+		return background;
+	}
+
 	
 	//creates a JLabel for the map with the given dimensions + scaled
 	private JLabel createImage(Dimension a)
@@ -319,7 +332,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 			try {
 				mrXBuffered = ImageIO.read(mrX);
 				//scales the image to be size * size
-				mrXBuffered = scale(mrXBuffered, BufferedImage.TYPE_INT_ARGB, size);
+				mrXBuffered = resize(mrXBuffered, new Dimension(size, size));
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
@@ -340,7 +353,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 			try {
 				detectiveBuffered = ImageIO.read(detective);
 				//scales image
-				detectiveBuffered = scale(detectiveBuffered, BufferedImage.TYPE_INT_ARGB, size);
+				detectiveBuffered = resize(detectiveBuffered, new Dimension(size, size));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -350,18 +363,6 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 			detectiveLabel.setLocation(X - 15, Y - 15);
 			return detectiveLabel;
 		}
-	}
-	
-	//scales image to the required size * size and the required image type
-	private BufferedImage scale(BufferedImage previous, int imageType, int size) {
-	    BufferedImage scaledImage = null;
-	    if(previous != null) {
-	        scaledImage = new BufferedImage(size, size, imageType);
-	        Graphics2D g2D = scaledImage.createGraphics();
-	        AffineTransform at = AffineTransform.getScaleInstance(imageScale(), imageScale());
-	        g2D.drawRenderedImage(previous, at);
-	    }
-	    return scaledImage;
 	}
 	
 	//uses old map dimensions and new map dimensions and works out the scale factor
@@ -423,6 +424,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 	
 	private void currentRound()
 	{
+		//works out current round in game using the total amount of used moves
 		int usedMovesTotal = 0;
 		for(int ID : playerVisualisable.getMrXIdList())
 		{
@@ -432,14 +434,20 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		{
 			usedMovesTotal = usedMovesTotal + visualisable.getMoveList(ID).size();
 		}
+		//takes into account double moves
 		int occurrences = Collections.frequency(visualisable.getMoveList(0), Initialisable.TicketType.DoubleMove);
 		currentRound = 1;
+		//if no used moves then the current round is 1
 		if(usedMovesTotal == 0) currentRound = 1;
 		else{
+			//calculation to work out current round
 			currentRound = (usedMovesTotal - (occurrences * 2)) / (playerVisualisable.getMrXIdList().size() + playerVisualisable.getDetectiveIdList().size()) + 1;
 		}
+		//displays current round
 		JLabel currentRoundLabel = new JLabel("Current Round: " + currentRound);
+		//location in respect to map
 		currentRoundLabel.setLocation((int) (resizedImageDimensions.getWidth() * 0.55), (int) resizedImageDimensions.getHeight() + 40);
+		//size in relation to scale factor of map
 		currentRoundLabel.setSize((int) (390 * imageScale()),60);
 		Border border = BorderFactory.createLineBorder(Color.DARK_GRAY, 5);
 		currentRoundLabel.setBorder(border);
@@ -467,7 +475,6 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		//sets the location to be 10 pixels to the right of the map - in relation to how the map is scaled
 		tabbedPane.setLocation((int) (resizedImageDimensions.getWidth() + 10), 70);
 		//sets size of tabbed pane
-		
 		tabbedPane.setSize((int) (window.getContentPane().getWidth() - resizedImageDimensions.getWidth() - 20), 400);
 		int i;
 		//for the number of Mr X's in the Mr X ID List
@@ -627,6 +634,8 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		movesUsed.setSize((int) (window.getContentPane().getWidth() - resizedImageDimensions.getWidth() - 20), 300);
 		//gets the list of used moves
 		ArrayList<Initialisable.TicketType> usedMoves = (ArrayList<Initialisable.TicketType>) visualisable.getMoveList(0);
+		//j acts as a counter variable here
+		//these variables are used to make sure that when the number of moves in the log goes over the panel height, that a new column is started
 		int temp = 0;
 		int x = 0;
 		int j = 0;
@@ -713,7 +722,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
     		try {
     			highlightBuffered = ImageIO.read(highlightURL);
     			//scales the bufferedimage to be size*size which is 30 * the scale factor the map was scaled by
-    			highlightBuffered = scale(highlightBuffered, BufferedImage.TYPE_INT_ARGB, size);
+    			highlightBuffered = resize(highlightBuffered, new Dimension(size, size));
     		} catch (IOException e1) {
     			e1.printStackTrace();
     		}
@@ -744,7 +753,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		try {
 			mousecursor = ImageIO.read(cursorURL);
 			//mouse cursor is set to size (size * size)
-			mousecursor = scale(mousecursor, BufferedImage.TYPE_INT_ARGB, size);
+			mousecursor = resize(mousecursor, new Dimension(size, size));
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -865,7 +874,6 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
     	 displayPlayers();
     	 //shows the Mr X tab
     	 tabbedPane.setSelectedIndex(currentPlayerID);
-    	 
     	 window.setVisible(true);
 	}
 	
@@ -965,11 +973,12 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		}
 	}
 	
+	//checks if the output from the movePlayer function is true or not and produces the corresponding output
 	private void checkMovePlayer(boolean movePlayer, int tempPlayerID)
 	{
 		if(movePlayer == true)
 		{
-			repaintPlayersLabels(tempPlayerID);
+			repaint(tempPlayerID);
   		 	if(visualisable.isGameOver())
    		 	{   		 	
   		 		int winnerPlayerID = visualisable.getWinningPlayerId();
@@ -983,7 +992,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		}
 	}
 	
-	
+	//gives the user the option to select a transport type and returns the ticketType selected
 	private Initialisable.TicketType transportSelection(Initialisable.TicketType ticketType, Integer newNode)
 	{
 		
@@ -1008,6 +1017,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		return ticketType;
 	}
 	
+	//shows Detective winner message on the screen
 	private void showDetectiveWinner(String winner, Integer winnerPlayerID)
 	{
 		URL detectiveWin = this.getClass().getResource("DetectiveWin.png");
@@ -1021,6 +1031,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 	 		JOptionPane.showMessageDialog(window,"Congratulations for winning. " + winner, "Winner!", JOptionPane.INFORMATION_MESSAGE, new ImageIcon(detectiveWinBuffered));
 	}
 	
+	//shows Mr X winner message on the screen
 	private void showMrXWinner(String winner)
 	{
 		URL MrXWin = this.getClass().getResource("MrXWin.png");
@@ -1033,23 +1044,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 	 		winner = "Mr X";
 	 		JOptionPane.showMessageDialog(window,"Congratulations for winning. " + winner, "Winner!", JOptionPane.INFORMATION_MESSAGE, new ImageIcon(MrXWinBuffered));
 	}
-	
-	private void repaintPlayersLabels(Integer tempPlayerID)
-	{
-		//remove all layer 1 components
-		final Component[] listComponents = layeredPane.getComponentsInLayer(1);
-		for(Component b : listComponents)
-   	 	{
-			layeredPane.remove(b);
-       	}
-		//repaint the layered pane
-		layeredPane.repaint();
-   	 	//assigns currentPlayerID to tempPlayerID
-   	 	currentPlayerID = tempPlayerID;
-   	 	//calls displayPlayers()
- 	 	displayPlayers();
-	}
-	
+
 	//not implemented
 	public void mouseDragged(MouseEvent arg0) {}
 	public void mouseEntered(MouseEvent arg0) {}
