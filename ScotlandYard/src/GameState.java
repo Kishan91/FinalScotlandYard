@@ -453,7 +453,7 @@ public class GameState implements MapVisualisable, Initialisable,
 					// if the player is a detective - we typecast the player as
 					// a Detective
 					if (currentPlayer.getPlayerType() == Player.playerType.Detective) {
-						Detective player = (Detective) currentPlayer;
+						Detective player = (Detective) currentPlayer;	
 						// set check initially to true
 						check = true;
 						MrX mrXPlayer = (MrX) getPlayerFromId(0);
@@ -466,7 +466,7 @@ public class GameState implements MapVisualisable, Initialisable,
 						// number of tickets available
 						check = checkPositionNotOccupied(check, targetNodeId);
 						if (check == true) {
-							setNextPlayer((Player) player, targetNodeId);
+							setNextPlayer((Player) player, targetNodeId, false);
 						} else {
 							if ((getStationType(playerId).equals("Taxi") && player.taxi
 									.size() == 0)
@@ -489,7 +489,18 @@ public class GameState implements MapVisualisable, Initialisable,
 						check = true;
 						check = checkValidMrXTickets(check, player, ticketType);
 						if (check == true) {
-							setNextPlayer((Player) player, targetNodeId);
+							if(ticketType != TicketType.DoubleMove && ticketType != TicketType.SecretMove)
+							{
+								setNextPlayer((Player) player, targetNodeId, false);
+								/*
+								if(player.used.size() > 1 && player.used.get(player.used.size() - 2) == TicketType.DoubleMove){
+									Test.printf("LEL");
+									setNextPlayer((Player) player, targetNodeId, true);
+								} else {
+									setNextPlayer((Player) player, targetNodeId, false);
+								}
+								*/
+							}
 						} else {
 							return false;
 						}
@@ -539,6 +550,7 @@ public class GameState implements MapVisualisable, Initialisable,
 		}else{
 			check = false;
 		}
+		//if(player.used.size() > 1 && player.used.get(player.used.size() - 2) == TicketType.SecretMove) player.used.remove(player.used.size() - 1);
 		return check;
 	}
 
@@ -565,10 +577,13 @@ public class GameState implements MapVisualisable, Initialisable,
 		return check;
 	}
 
-	private void setNextPlayer(Player player, Integer targetNodeId) {
+	private void setNextPlayer(Player player, Integer targetNodeId, boolean doubleMoveFlag) {
 		player.setPosition(targetNodeId);
-		currentPlayerID = getNextPlayerToMove();
-		currentTurn++;
+		if(!doubleMoveFlag)
+		{
+			currentPlayerID = getNextPlayerToMove();
+			currentTurn++;	
+		}
 		player.setNodeNeighbours(graph.edges(targetNodeId.toString()));
 		setStationType(player);
 	}
@@ -587,7 +602,7 @@ public class GameState implements MapVisualisable, Initialisable,
 		} else if (type1 == TicketType.Underground
 				&& type2 == Edge.EdgeType.Underground) {
 			check = true;
-		} else if (type1 == TicketType.SecretMove)
+		} else if (type1 == TicketType.SecretMove || type1 == TicketType.DoubleMove)
 			check = true;
 		// otherwise false is returned
 		return check;
@@ -601,7 +616,7 @@ public class GameState implements MapVisualisable, Initialisable,
 		// gets current node the current player is on
 		String currentNode = getNodeId(currentPlayerID).toString();
 		// gets all the edges the player can possibly transverse
-		Test.printf(currentNode);
+		Test.printf("SELECTED NODE" + currentNode);
 		List<Edge> nodeNeighbours = graph.edges(currentNode);
 		// if no possible moves to go to, return -2
 		if (nodeNeighbours.size() == 0) return -2;

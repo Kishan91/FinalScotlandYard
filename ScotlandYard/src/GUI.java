@@ -6,11 +6,13 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 
 import javax.imageio.*;
+
 
 import java.awt.event.MouseMotionListener;
 
@@ -33,6 +35,9 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 	//custom mouse cursor
 	private BufferedImage mousecursor;
 	boolean flag = false;
+	private boolean secretMoveFlag = false;
+	private boolean doubleMoveFlag1 = false;
+	private boolean doubleMoveFlag2 = false;
 	//enum playerType to distinguish between player types
 	int currentRound = 1;
 	enum playerType { Detective, MrX }
@@ -75,14 +80,31 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		window.setPreferredSize(effectiveScreenRes);
 		window.setResizable(false);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		URL backgroundURL = this.getClass().getResource("BACKGROUND.jpg");
+		ImageIcon background = null;
+		BufferedImage backgroundBuffered = null;
+		try {
+			backgroundBuffered = ImageIO.read(backgroundURL);
+			//scales the image to be size * size
+			backgroundBuffered = resize(backgroundBuffered, effectiveScreenRes);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		//creates an imageicon out of the buffered image
+		background = new ImageIcon(backgroundBuffered);
+		
+		JLabel gameBackground = new JLabel(background);
+		gameBackground.setSize(effectiveScreenRes);
+	
 		//makes a layeredPane which is the effective screen size
 		layeredPane = new JLayeredPane();
 		layeredPane.setPreferredSize(effectiveScreenRes);
 		//adds the layeredpane to the window jframe
 		window.add(layeredPane);
+		layeredPane.add(gameBackground, 0);
 		
 		//returns a JLabel with the map size set
-		JLabel background = createImage(effectiveScreenRes);
+		JLabel Mapbackground = createImage(effectiveScreenRes);
 		
 		//adds a mouse listener to the window jframe - which is used for the mouseClicked method
 		window.addMouseListener(this);
@@ -90,7 +112,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		window.addMouseMotionListener(this); 
 		
 		//adds the background jlabel to the layeredPane with component ID 0 - automatically added to layer 0
-		layeredPane.add(background, 0);
+		layeredPane.add(Mapbackground, 0);
 		window.setVisible(true);
 		window.pack();
 		//draws cursor label
@@ -291,13 +313,13 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		if(type == playerType.MrX)
 		{
 			//gets mr x url and reads the image at the url
-			URL mrX = this.getClass().getResource("MrX.jpg");
+			URL mrX = this.getClass().getResource("MrX.png");
 			ImageIcon mrXImage = null;
 			BufferedImage mrXBuffered = null;
 			try {
 				mrXBuffered = ImageIO.read(mrX);
 				//scales the image to be size * size
-				mrXBuffered = scale(mrXBuffered, BufferedImage.TYPE_INT_RGB, size);
+				mrXBuffered = scale(mrXBuffered, BufferedImage.TYPE_INT_ARGB, size);
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
@@ -312,13 +334,13 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		//otherwise if player type = detective
 		} else {
 			//gets detective url and reads the image
-			URL detective = this.getClass().getResource("Detective.jpg");
+			URL detective = this.getClass().getResource("Detective.png");
 			ImageIcon detectiveImage = null;
 			BufferedImage detectiveBuffered = null;
 			try {
 				detectiveBuffered = ImageIO.read(detective);
 				//scales image
-				detectiveBuffered = scale(detectiveBuffered, BufferedImage.TYPE_INT_RGB, size);
+				detectiveBuffered = scale(detectiveBuffered, BufferedImage.TYPE_INT_ARGB, size);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -360,13 +382,15 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		//otherwise the current player is a Detective of number current player ID
 		else currentPlayerLabel = new JLabel("Current Player: " + "Detective " + currentPlayerID);		
 		//sets the location of the label in relation to the map
-		currentPlayerLabel.setLocation((int) (resizedImageDimensions.getWidth() * 0.05), (int) (resizedImageDimensions.getHeight() + 5));
+		currentPlayerLabel.setLocation((int) (resizedImageDimensions.getWidth() * 0.05), (int) (resizedImageDimensions.getHeight() + 10));
 		//sets size of the label
 		currentPlayerLabel.setSize((int) (470 * imageScale()),60);
 		//creates a border around the label and sets the font
 		Border border = BorderFactory.createLineBorder(Color.BLUE, 5);
 		currentPlayerLabel.setBorder(border);
-		
+		currentPlayerLabel.setForeground(Color.DARK_GRAY);
+		currentPlayerLabel.setBackground(Color.lightGray);
+		currentPlayerLabel.setOpaque(true);
 		currentPlayerLabel.setFont(new Font("Impact", Font.PLAIN, (int) (40 * imageScale())));
 		//adds the label to the layered pane at layer 1
 		layeredPane.add(currentPlayerLabel, 1);
@@ -382,13 +406,15 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		//otherwise the next player is a detective of number returned by getNextPlayerToMove
 		else nextPlayerLabel = new JLabel("Next Player: Detective " + visualisable.getNextPlayerToMove());
 		//sets location of the next player label in relation to the map
-		nextPlayerLabel.setLocation((int) (resizedImageDimensions.getWidth() * 0.05), (int) (resizedImageDimensions.getHeight() + 65));
+		nextPlayerLabel.setLocation((int) (resizedImageDimensions.getWidth() * 0.05), (int) (resizedImageDimensions.getHeight() + 80));
 		//sets size of the label
 		nextPlayerLabel.setSize((int) (470 * imageScale()),60);
 		//creates a border around the label and sets the font
 		Border border = BorderFactory.createLineBorder(Color.RED, 5);
 		nextPlayerLabel.setBorder(border);
-		
+		nextPlayerLabel.setForeground(Color.DARK_GRAY);
+		nextPlayerLabel.setBackground(Color.lightGray);
+		nextPlayerLabel.setOpaque(true);
 		nextPlayerLabel.setFont(new Font("Impact", Font.PLAIN, (int) (40 * imageScale())));
 		//ads the label to the layered pane at layer 1
 		layeredPane.add(nextPlayerLabel, 1);
@@ -406,16 +432,21 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		{
 			usedMovesTotal = usedMovesTotal + visualisable.getMoveList(ID).size();
 		}
+		int occurrences = Collections.frequency(visualisable.getMoveList(0), Initialisable.TicketType.DoubleMove);
 		currentRound = 1;
 		if(usedMovesTotal == 0) currentRound = 1;
 		else{
-			currentRound = usedMovesTotal / (playerVisualisable.getMrXIdList().size() + playerVisualisable.getDetectiveIdList().size()) + 1;
+			currentRound = (usedMovesTotal - occurrences * 2) / (playerVisualisable.getMrXIdList().size() + playerVisualisable.getDetectiveIdList().size()) + 1;
 		}
 		JLabel currentRoundLabel = new JLabel("Current Round: " + currentRound);
 		currentRoundLabel.setLocation((int) (resizedImageDimensions.getWidth() * 0.55), (int) resizedImageDimensions.getHeight() + 40);
 		currentRoundLabel.setSize((int) (390 * imageScale()),60);
 		Border border = BorderFactory.createLineBorder(Color.DARK_GRAY, 5);
 		currentRoundLabel.setBorder(border);
+		currentRoundLabel.setForeground(Color.DARK_GRAY);
+		currentRoundLabel.setBackground(Color.lightGray);
+		currentRoundLabel.setOpaque(true);
+		currentRoundLabel.setFont(new Font("Impact", Font.PLAIN, (int) (40 * imageScale())));
 		currentRoundLabel.setFont(new Font("Impact", Font.PLAIN, (int) (40 * imageScale())));
 		layeredPane.add(currentRoundLabel, 1);
 		layeredPane.setLayer(currentRoundLabel, 1);
@@ -424,12 +455,20 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 	//creates a mrX panel for the tabbed pane
 	private int mrXPanel()
 	{
+		URL busIcon = this.getClass().getResource("Bus.png");
+		URL taxiIcon = this.getClass().getResource("Taxi.png");
+		URL tubeIcon = this.getClass().getResource("Underground.png");
+		URL doubleIcon = this.getClass().getResource("DoubleMove.png");
+		URL secretIcon = this.getClass().getResource("SecretMove.png");
+		URL positionIcon = this.getClass().getResource("Position.png");
+		URL stationTypeIcon = this.getClass().getResource("StationType.png");
 		//makes a new tabbed pane
 		tabbedPane = new JTabbedPane();
 		//sets the location to be 10 pixels to the right of the map - in relation to how the map is scaled
 		tabbedPane.setLocation((int) (resizedImageDimensions.getWidth() + 10), 70);
 		//sets size of tabbed pane
-		tabbedPane.setSize(430, 400);
+		
+		tabbedPane.setSize((int) (window.getContentPane().getWidth() - resizedImageDimensions.getWidth() - 20), 400);
 		int i;
 		//for the number of Mr X's in the Mr X ID List
 		for(i = 0; i < playerVisualisable.getMrXIdList().size(); i++)
@@ -442,31 +481,45 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 			mrX.setSize(430, 300);
 			//gets the number of tickets for the given Mr X player, the player position and the station type
 			JLabel noBusTickets = new JLabel("Number of bus tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.Bus, 0));
+			noBusTickets.setIcon(new ImageIcon(busIcon));
+			noBusTickets.setForeground(Color.LIGHT_GRAY);
 			JLabel noTaxiTickets = new JLabel("Number of taxi tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.Taxi, 0));
+			noTaxiTickets.setIcon(new ImageIcon(taxiIcon));
+			noTaxiTickets.setForeground(Color.LIGHT_GRAY);
 			JLabel noTubeTickets = new JLabel("Number of tube tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.Underground, 0));
+			noTubeTickets.setIcon(new ImageIcon(tubeIcon));
+			noTubeTickets.setForeground(Color.LIGHT_GRAY);
 			JLabel noSdoubleTickets = new JLabel("Number of double move tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.DoubleMove, 0));
-			JLabel noSpecialTickets = new JLabel("Number of special tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.SecretMove, 0));
+			noSdoubleTickets.setIcon(new ImageIcon(doubleIcon));
+			noSdoubleTickets.setForeground(Color.LIGHT_GRAY);
+			JLabel noSpecialTickets = new JLabel("Number of secret move tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.SecretMove, 0));
+			noSpecialTickets.setIcon(new ImageIcon(secretIcon));
+			noSpecialTickets.setForeground(Color.LIGHT_GRAY);
 			JLabel playerPosition = new JLabel("Player position: " + visualisable.getNodeId(0));
+			playerPosition.setIcon(new ImageIcon(positionIcon));
+			playerPosition.setForeground(Color.LIGHT_GRAY);
 			if(flag == true)
 			{
 				JLabel playerStationType = new JLabel("Current station type: " + customVisualiser.getStationType(0));
-				playerStationType.setLocation(0, 190);
-				playerStationType.setSize(400, 20);
+				playerStationType.setLocation(0, 300);
+				playerStationType.setIcon(new ImageIcon(stationTypeIcon));
+				playerStationType.setSize(400, 40);
+				playerStationType.setForeground(Color.LIGHT_GRAY);
 				mrX.add(playerStationType);
 			}
 			//sets the location of the JLabels and the sizes
-			noBusTickets.setLocation(0, 10);
-			noTaxiTickets.setLocation(0, 40);
-			noTubeTickets.setLocation(0, 70);
-			noSdoubleTickets.setLocation(0, 100);
-			noSpecialTickets.setLocation(0, 130);
-			playerPosition.setLocation(0, 160);
-			noBusTickets.setSize(400, 20);
-			noTaxiTickets.setSize(400, 20);
-			noTubeTickets.setSize(400, 20);
-			noSdoubleTickets.setSize(400, 20);
-			noSpecialTickets.setSize(400, 20);
-			playerPosition.setSize(400, 20);
+			noBusTickets.setLocation(0, 5);
+			noTaxiTickets.setLocation(0, 50);
+			noTubeTickets.setLocation(0, 100);
+			noSdoubleTickets.setLocation(0, 150);
+			noSpecialTickets.setLocation(0, 200);
+			playerPosition.setLocation(0, 250);
+			noBusTickets.setSize(400, 40);
+			noTaxiTickets.setSize(400, 40);
+			noTubeTickets.setSize(400, 40);
+			noSdoubleTickets.setSize(400, 40);
+			noSpecialTickets.setSize(400, 40);
+			playerPosition.setSize(400, 40);
 			//adds all the labels to the Mr X JPanel
 			mrX.add(noBusTickets);
 			mrX.add(noTaxiTickets);
@@ -475,6 +528,8 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 			mrX.add(noSpecialTickets);
 			mrX.add(playerPosition);
 			//makes the panel visible and adds it to the tabbed pane
+			mrX.setBackground(Color.DARK_GRAY);
+			mrX.setOpaque(true);
 			mrX.setVisible(true);
 			tabbedPane.add("Mr X", mrX);
 		}
@@ -485,6 +540,11 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 	//creates a detective panel for the tabbed pane
 	private void detectivePanels(int index)
 	{
+		URL busIcon = this.getClass().getResource("Bus.png");
+		URL taxiIcon = this.getClass().getResource("Taxi.png");
+		URL tubeIcon = this.getClass().getResource("Underground.png");
+		URL positionIcon = this.getClass().getResource("Position.png");
+		URL stationTypeIcon = this.getClass().getResource("StationType.png");
 		//for the number of Detectives in the Detective ID list - starting at 1 in this case
 		for(int i = index; i < playerVisualisable.getDetectiveIdList().size() + 1; i++)
 		{
@@ -496,36 +556,50 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 			detective1.setSize(430, 300);
 			//gets the number of tickets for the given Mr X player, the player position and the station type
 			JLabel noBusTickets = new JLabel("Number of bus tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.Bus, i));
+			noBusTickets.setIcon(new ImageIcon(busIcon));
+			noBusTickets.setForeground(Color.LIGHT_GRAY);
 			JLabel noTaxiTickets = new JLabel("Number of taxi tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.Taxi, i));
+			noTaxiTickets.setIcon(new ImageIcon(taxiIcon));
+			noTaxiTickets.setForeground(Color.LIGHT_GRAY);
 			JLabel noTubeTickets = new JLabel("Number of tube tickets: " + visualisable.getNumberOfTickets(Initialisable.TicketType.Underground, i));
+			noTubeTickets.setIcon(new ImageIcon(tubeIcon));
+			noTubeTickets.setForeground(Color.LIGHT_GRAY);
 			JLabel playerPosition = new JLabel("Player position: " + visualisable.getNodeId(i));
+			playerPosition.setIcon(new ImageIcon(positionIcon));
+			playerPosition.setForeground(Color.LIGHT_GRAY);
 			if(flag == true)
 			{
 				JLabel playerStationType = new JLabel("Current station type: " + customVisualiser.getStationType(i));
-				playerStationType.setLocation(0, 130);
-				playerStationType.setSize(400, 20);
+				playerStationType.setLocation(0, 200);
+				playerStationType.setIcon(new ImageIcon(stationTypeIcon));
+				playerStationType.setSize(400, 40);
+				playerStationType.setForeground(Color.LIGHT_GRAY);
 				detective1.add(playerStationType);
 			}
 			//sets the location of the JLabels and the sizes
-			noBusTickets.setLocation(0, 10);
-			noTaxiTickets.setLocation(0, 40);
-			noTubeTickets.setLocation(0, 70);
-			playerPosition.setLocation(0, 100);
-			noBusTickets.setSize(400, 20);
-			noTaxiTickets.setSize(400, 20);
-			noTubeTickets.setSize(400, 20);
-			playerPosition.setSize(400, 20);
+			noBusTickets.setLocation(0, 5);
+			noTaxiTickets.setLocation(0, 50);
+			noTubeTickets.setLocation(0, 100);
+			playerPosition.setLocation(0, 150);
+			noBusTickets.setSize(400, 40);
+			noTaxiTickets.setSize(400, 40);
+			noTubeTickets.setSize(400, 40);
+			playerPosition.setSize(400, 40);
 			//adds all the labels to the Detective JPanel
 			detective1.add(noBusTickets);
 			detective1.add(noTaxiTickets);
 			detective1.add(noTubeTickets);
 			detective1.add(playerPosition);
+			detective1.setBackground(Color.DARK_GRAY);
+			detective1.setOpaque(true);
 			//makes the panel visible and adds it to the tabbed pane
 			detective1.setVisible(true);
 			tabbedPane.add("Detective " + String.valueOf(i), detective1);
 		}
 		//sets the shown tab to tbe current player ID
 		tabbedPane.setSelectedIndex(currentPlayerID);
+		tabbedPane.setBackground(Color.LIGHT_GRAY);
+		tabbedPane.setOpaque(true);
 		//sets the tabbed pane to be visible
 		tabbedPane.setVisible(true);
 		//adds the tabbed pane to the layered pane
@@ -537,35 +611,78 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 	//makes a Mr X move log
 	private void mrXMoveLog()
 	{
+		URL busIcon = this.getClass().getResource("Bus.png");
+		URL taxiIcon = this.getClass().getResource("Taxi.png");
+		URL tubeIcon = this.getClass().getResource("Underground.png");
+		URL doubleIcon = this.getClass().getResource("DoubleMove.png");
+		URL secretIcon = this.getClass().getResource("SecretMove.png");
 		//makes a tabbed pane for the Mr X move log
 		JTabbedPane moveLog = new JTabbedPane();
 		//sets location of the Mr X location in relation to the map and sets the size
-		moveLog.setLocation((int) (resizedImageDimensions.getWidth() + 10), 460);
-		moveLog.setSize(430, (int) (350 * imageScale()));
+		moveLog.setLocation((int) (resizedImageDimensions.getWidth() + 10), 480);
+		moveLog.setSize((int) (window.getContentPane().getWidth() - resizedImageDimensions.getWidth() - 20), (int) (350 * imageScale()));
 		//creates a movesUsed JPanel and sets the size
 		JPanel movesUsed = new JPanel();
 		movesUsed.setLayout(null);
-		movesUsed.setSize(600, 300);
+		movesUsed.setSize((int) (window.getContentPane().getWidth() - resizedImageDimensions.getWidth() - 20), 300);
 		//gets the list of used moves
 		ArrayList<Initialisable.TicketType> usedMoves = (ArrayList<Initialisable.TicketType>) visualisable.getMoveList(0);
+		int temp = 0;
+		int x = 0;
+		int j = 0;
 		for(int i = 0; i < usedMoves.size(); i++)
 		{
 			//goes through the list of used moves and adds a new label for each one to the JPanel
 			String type = null;
-			if(usedMoves.get(i) == Initialisable.TicketType.Bus) type = "Bus";
-			else if (usedMoves.get(i) == Initialisable.TicketType.Taxi) type = "Taxi";
-			else if (usedMoves.get(i) == Initialisable.TicketType.Underground) type = "Underground";
-			else if (usedMoves.get(i) == Initialisable.TicketType.DoubleMove) type = "Double move";
-			else if (usedMoves.get(i) == Initialisable.TicketType.SecretMove) type = "Secret move";
+			URL iconToDisplay = null;
+			if(usedMoves.get(i) == Initialisable.TicketType.Bus)
+			{
+				type = "Bus";
+				iconToDisplay = busIcon;
+			}
+			else if (usedMoves.get(i) == Initialisable.TicketType.Taxi)
+			{
+				type = "Taxi";
+				iconToDisplay = taxiIcon;
+			}
+			else if (usedMoves.get(i) == Initialisable.TicketType.Underground){
+				type = "Underground";
+				iconToDisplay = tubeIcon;
+			}
+			else if (usedMoves.get(i) == Initialisable.TicketType.DoubleMove){
+				type = "Double move";
+				iconToDisplay = doubleIcon;
+			}
+			else if (usedMoves.get(i) == Initialisable.TicketType.SecretMove)
+			{
+				type = "Secret move";
+				iconToDisplay = secretIcon;
+			}
 			JLabel move = new JLabel("Move " + String.valueOf(i + 1) + ": " + type);
-			move.setLocation(0, 40 + (30 * i));
-			move.setSize(400, 20);
+			move.setIcon(new ImageIcon(iconToDisplay));
+			//move.setForeground(Color.LIGHT_GRAY);
+			move.setOpaque(true);
+			if((5 + (30 * (i - temp))) > 280)
+			{
+				temp = i;
+				if(j == 0) x = (int) (window.getContentPane().getWidth() - resizedImageDimensions.getWidth() - 20) / 4;
+				else{
+					x = (int) (((window.getContentPane().getWidth() - resizedImageDimensions.getWidth() - 20) / 4) + 
+							((window.getContentPane().getWidth() - resizedImageDimensions.getWidth() - 20) / 4));
+				}
+				j++;
+			}
+			move.setLocation(x, 5 + (30 * (i - temp)));
 			movesUsed.add(move);
 		}
+		movesUsed.setBackground(Color.DARK_GRAY);
+		movesUsed.setOpaque(true);
 		//sets the JPanel to be visible
 		movesUsed.setVisible(true);
 		//adds the JPanel to the tabbed pane and sets it to be visible
 		moveLog.add("Mr X Move Log", movesUsed);
+		moveLog.setBackground(Color.LIGHT_GRAY);
+		moveLog.setOpaque(true);
 		moveLog.setVisible(true);
 		//add the tabbed pane to the layered pane and sets the layer to 1
 		layeredPane.add(moveLog);
@@ -641,20 +758,12 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 	//creates and displays the new game button
 	private void newGameButton()
 	{	
-		//reads the new game button image
-		BufferedImage img = null;
-		try {
-			img = ImageIO.read(this.getClass().getResource("new.jpg"));
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		//resizes the image
-		img = resize(img, new Dimension(130, 30));
-		//creates a new JButton with the image
-		JButton newGame = new JButton(new ImageIcon(img));
+		JButton newGame = new JButton("New game");
+		newGame.setBackground(Color.DARK_GRAY);
+		newGame.setOpaque(true);
 		//sets the location in relation to the map and sets the size
-		newGame.setLocation((int) (resizedImageDimensions.getWidth() + 20), 30);
-		newGame.setSize(130, 30);
+		newGame.setLocation((int) (resizedImageDimensions.getWidth() + (int) (window.getContentPane().getWidth() - resizedImageDimensions.getWidth() - 20) / 16), 30);
+		newGame.setSize((int) (window.getContentPane().getWidth() - resizedImageDimensions.getWidth() - 20) / 4, 30);
 		//adds the button to the layeredPane at layer 0
 		layeredPane.add(newGame, 0);
 		//when the button is pressed, this method in this listener is called
@@ -682,20 +791,13 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 	//creates and displays the load game button
 	private void loadGameButton()
 	{	
-		//reads the load game button image
-		BufferedImage img = null;
-		try {
-			img = ImageIO.read(this.getClass().getResource("load.jpg"));
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		//resizes the image
-		img = resize(img, new Dimension(130, 30));
 		//creates a new JButton with the image
-		JButton loadGame = new JButton(new ImageIcon(img));
+		JButton loadGame = new JButton("Load game");
+		loadGame.setBackground(Color.DARK_GRAY);
+		loadGame.setOpaque(true);
 		//sets the location in relation to the map and sets the size
-		loadGame.setLocation((int) (resizedImageDimensions.getWidth() + 160), 30);
-		loadGame.setSize(130, 30);
+		loadGame.setLocation((int) (resizedImageDimensions.getWidth() + resizedImageDimensions.getWidth() - 20) / 16 + (int) (window.getContentPane().getWidth() - + (int) (window.getContentPane().getWidth() - resizedImageDimensions.getWidth() - 20) / 1.28), 30);
+		loadGame.setSize((int) (window.getContentPane().getWidth() - resizedImageDimensions.getWidth() - 20) / 4, 30);
 		//adds the button to the layeredPane at layer 0
 		layeredPane.add(loadGame, 0);
 		//load game listener
@@ -720,20 +822,13 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 	//creates and displays the save game button
 	private void saveGameButton()
 	{	
-		//reads the save game button image
-		BufferedImage img = null;
-		try {
-			img = ImageIO.read(this.getClass().getResource("save.jpg"));
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		//resizes the image
-		img = resize(img, new Dimension(130, 30));
 		//creates a new JButton with the image
-		JButton saveGame = new JButton(new ImageIcon(img));
+		JButton saveGame = new JButton("Save game");
+		saveGame.setBackground(Color.DARK_GRAY);
+		saveGame.setOpaque(true);
 		//sets the location in relation to the map and sets the size
-		saveGame.setLocation((int) (resizedImageDimensions.getWidth() + 300), 30);
-		saveGame.setSize(130, 30);
+		saveGame.setLocation((int) (resizedImageDimensions.getWidth() + resizedImageDimensions.getWidth() - 20) / 16 + (int) (window.getContentPane().getWidth() - + (int) (window.getContentPane().getWidth() - resizedImageDimensions.getWidth() - 20) / 2.18), 30);
+		saveGame.setSize((int) (window.getContentPane().getWidth() - resizedImageDimensions.getWidth() - 20) / 4, 30);
 		//adds the button to the layeredPane at layer 0
 		layeredPane.add(saveGame, 0);
 		//save game listener
@@ -822,19 +917,36 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 					movePlayer = controllable.movePlayer(currentPlayerID, newNode, ticketType);
 					//if true
 					
+					Test.printf(movePlayer);
 					if(movePlayer == true)
 					{
-						repaintPlayersLabels(tempPlayerID);
-			  		 	if(visualisable.isGameOver())
-			   		 	{   		 	
-			  		 		int winnerPlayerID = visualisable.getWinningPlayerId();
-				   		 	String winner = null;
-				   		 	if(winnerPlayerID == 0) showMrXWinner(winner);
-				   		 	else showDetectiveWinner(winner, winnerPlayerID);
-				   		}
-					} else{
-						JOptionPane.showMessageDialog(null, "Invalid move" ,"Player move", JOptionPane.ERROR_MESSAGE);
-						return;
+						/*
+						if(ticketType == Initialisable.TicketType.SecretMove)
+						{
+							secretMoveFlag = true;
+							Test.printf("SECRET MOVE ACTIVATED");
+						} else if (ticketType == Initialisable.TicketType.DoubleMove)
+						{
+							doubleMoveFlag1 = true;
+							Test.printf("DOUBLE MOVE ACTIVATED");
+						} else if (doubleMoveFlag1){
+							checkMovePlayer(movePlayer, currentPlayerID);
+							doubleMoveFlag1 = false;
+							doubleMoveFlag2 = true;
+						} else if (secretMoveFlag){
+							checkMovePlayer(movePlayer, tempPlayerID);
+							secretMoveFlag = false;
+						} else if (doubleMoveFlag2){
+							Test.printf("ENTER?");
+							checkMovePlayer(movePlayer, tempPlayerID);
+							doubleMoveFlag1 = false;
+							doubleMoveFlag2 = false;
+							Test.printf("DOUBLE MOVE 2");
+						} else {
+							checkMovePlayer(movePlayer, tempPlayerID);
+						}
+						*/
+						checkMovePlayer(movePlayer, tempPlayerID);
 					}
 				}
 				
@@ -851,7 +963,23 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		}
 	}
 	
-
+	private void checkMovePlayer(boolean movePlayer, int tempPlayerID)
+	{
+		if(movePlayer == true)
+		{
+			repaintPlayersLabels(tempPlayerID);
+  		 	if(visualisable.isGameOver())
+   		 	{   		 	
+  		 		int winnerPlayerID = visualisable.getWinningPlayerId();
+	   		 	String winner = null;
+	   		 	if(winnerPlayerID == 0) showMrXWinner(winner);
+	   		 	else showDetectiveWinner(winner, winnerPlayerID);
+	   		}
+		} else{
+			JOptionPane.showMessageDialog(null, "Invalid move" ,"Player move", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+	}
 	
 	
 	private Initialisable.TicketType transportSelection(Initialisable.TicketType ticketType, Integer newNode)
