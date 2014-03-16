@@ -436,7 +436,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		currentRound = 1;
 		if(usedMovesTotal == 0) currentRound = 1;
 		else{
-			currentRound = (usedMovesTotal - occurrences * 2) / (playerVisualisable.getMrXIdList().size() + playerVisualisable.getDetectiveIdList().size()) + 1;
+			currentRound = (usedMovesTotal - (occurrences * 2)) / (playerVisualisable.getMrXIdList().size() + playerVisualisable.getDetectiveIdList().size()) + 1;
 		}
 		JLabel currentRoundLabel = new JLabel("Current Round: " + currentRound);
 		currentRoundLabel.setLocation((int) (resizedImageDimensions.getWidth() * 0.55), (int) resizedImageDimensions.getHeight() + 40);
@@ -660,7 +660,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 			}
 			JLabel move = new JLabel("Move " + String.valueOf(i + 1) + ": " + type);
 			move.setIcon(new ImageIcon(iconToDisplay));
-			//move.setForeground(Color.LIGHT_GRAY);
+			move.setForeground(Color.LIGHT_GRAY);
 			move.setOpaque(true);
 			if((5 + (30 * (i - temp))) > 280)
 			{
@@ -671,8 +671,11 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 							((window.getContentPane().getWidth() - resizedImageDimensions.getWidth() - 20) / 4));
 				}
 				j++;
+				
 			}
+			move.setSize(150, 20);
 			move.setLocation(x, 5 + (30 * (i - temp)));
+			move.setVisible(true);
 			movesUsed.add(move);
 		}
 		movesUsed.setBackground(Color.DARK_GRAY);
@@ -947,7 +950,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 						}
 						*/
 						checkMovePlayer(movePlayer, tempPlayerID);
-					}
+					} else JOptionPane.showMessageDialog(null, "Invalid move" ,"Player move", JOptionPane.ERROR_MESSAGE);
 				}
 				
 			}

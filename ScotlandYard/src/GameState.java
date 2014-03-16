@@ -616,7 +616,6 @@ public class GameState implements MapVisualisable, Initialisable,
 		// gets current node the current player is on
 		String currentNode = getNodeId(currentPlayerID).toString();
 		// gets all the edges the player can possibly transverse
-		Test.printf("SELECTED NODE" + currentNode);
 		List<Edge> nodeNeighbours = graph.edges(currentNode);
 		// if no possible moves to go to, return -2
 		if (nodeNeighbours.size() == 0) return -2;
