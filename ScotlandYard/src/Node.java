@@ -1,8 +1,10 @@
+import java.io.Serializable;
+
 
 /**
  * Class representing a node of the graph
  */
-public class Node
+public class Node implements Serializable
 {
     private String name;
 

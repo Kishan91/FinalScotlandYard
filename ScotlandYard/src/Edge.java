@@ -1,3 +1,5 @@
+import java.io.Serializable;
+
 
 /**
  * Class that represents a graph edge. The edges 
@@ -7,7 +9,7 @@
  * In addition, they have both an edge type and an edge weight.
  * It is important that you understand this class.
  */
-public class Edge {
+public class Edge implements Serializable {
 
 	/**
 	 * Enum type which defines the different

@@ -1,6 +1,8 @@
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,7 +14,6 @@ import javax.swing.JOptionPane;
  * TO DO LIST: Saturday
  //get double move to work
  //make new gui icons etc and use them
- //implement load and save game
 
  TO DO LIST: Sunday
  //Make code dry, 30 lines per method, 80 characters per line, improve variable and function names if need be
@@ -37,6 +38,8 @@ DONE: Saturday
 //BUG - win game - MR X ROUND NUMBER NOT UPDATING -- it works fine now BUT round number is showing incorrectly sometimes in GUI
 //set visibility of mr x on map 
  * 
+DONE: Sunday
+ //implement load and save game
 
  NOT SOLVABLE
  //Error changing number of detectives at start
@@ -62,7 +65,7 @@ DONE: Saturday
  * to implement the interfaces that we have provided you with
  */
 public class GameState implements MapVisualisable, Initialisable,
-		PlayerVisualisable, Visualisable, Controllable, customVisualisable {
+		PlayerVisualisable, Visualisable, Controllable, customVisualisable, Serializable {
 
 	// Stores list of Detective players
 	private ArrayList<Detective> listDetectives;
@@ -74,8 +77,7 @@ public class GameState implements MapVisualisable, Initialisable,
 	// Array of Mr X start positions
 	private final Integer[] MrXstartPos = new Integer[] { 51, 146, 45, 132,
 			106, 78, 127, 71, 172, 170, 166, 35, 104 };
-	// String array that stores each line in the pos.txt file except the first
-	// line
+	// String array that stores each line in the pos.txt file except the first line
 	private String[] posTxtStrings;
 	// List of Mr X ID's
 	private ArrayList<Integer> mrXIdList;
@@ -599,6 +601,7 @@ public class GameState implements MapVisualisable, Initialisable,
 		// gets current node the current player is on
 		String currentNode = getNodeId(currentPlayerID).toString();
 		// gets all the edges the player can possibly transverse
+		Test.printf(currentNode);
 		List<Edge> nodeNeighbours = graph.edges(currentNode);
 		// if no possible moves to go to, return -2
 		if (nodeNeighbours.size() == 0) return -2;
@@ -661,15 +664,53 @@ public class GameState implements MapVisualisable, Initialisable,
 	// IMPLEMENT LATER
 	@Override
 	public Boolean saveGame(String filename) {
-		// TODO Auto-generated method stub
-		return null;
+		boolean check = false;
+		try {
+			
+			File file = new File(filename);
+			if (!file.exists()) {
+					file.createNewFile();
+		        	Serializer loadSave = new Serializer(this, file);
+					loadSave.serializeDataOut();
+					check = true;
+			} else {
+				JOptionPane.showMessageDialog(null, "Save file with this name already exists" ,"Save File", JOptionPane.ERROR_MESSAGE);
+			}
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return check;
 	}
 
 	// IMPLEMENT LATER
 	@Override
 	public Boolean loadGame(String filename) {
-		// TODO Auto-generated method stub
-		return null;
+		boolean check = false;
+		try {
+			File file = new File(filename);
+        	Serializer loadSave = new Serializer(this, file);
+			GameState state = loadSave.serializeDataIn();
+			check = true;
+			if(state == null){
+				return false;
+			} else {
+				listDetectives = state.listDetectives;
+				listMrX = state.listMrX;
+				mrXIdList = state.mrXIdList;
+				detectiveIdList = state.detectiveIdList;
+				currentPlayerID = state.currentPlayerID;
+				currentTurn = state.currentTurn;
+				roundNumber = state.roundNumber;
+			}
+	
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return check;
 	}
 
 	@Override

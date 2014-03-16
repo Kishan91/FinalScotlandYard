@@ -1,4 +1,6 @@
-public class Detective extends Player {
+import java.io.Serializable;
+
+public class Detective extends Player implements Serializable {
 
 	public Detective()
 	{

@@ -1,5 +1,7 @@
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import java.awt.*;
 import java.io.IOException;
 import java.net.*;
@@ -7,8 +9,8 @@ import java.util.ArrayList;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.*;
-import javax.imageio.*;
 
+import javax.imageio.*;
 
 import java.awt.event.MouseMotionListener;
 
@@ -658,8 +660,6 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		//when the button is pressed, this method in this listener is called
 		newGame.addActionListener(new ActionListener() {
 	         public void actionPerformed(ActionEvent e) {
-	        	//gets all the components in layer 1
-	        	Component[] listComponents = layeredPane.getComponentsInLayer(1);
 	        	//sets window to be invisible
 	        	window.setVisible(false);
 	        	//asks the user for the number of detectives
@@ -674,21 +674,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 	     		else noDetectives = Integer.parseInt(s);
 	     		//reinitialises the game
 	        	initialisable.initialiseGame(noDetectives);
-	        	 //removes all the components in layer 1 from the layered pane
-	        	 for(Component b : listComponents)
-	        	 {
-	        		 layeredPane.remove(b);
-	        	 }
-	        	 //repaints the layeredpane
-        		 layeredPane.repaint();
-        		//sets the currentPlayerID to 0
-	        	 currentPlayerID = 0;
-        		 //displays all the players
-	        	 displayPlayers();
-	        	 //shows the Mr X tab
-	        	 tabbedPane.setSelectedIndex(0);
-	        	 
-	        	 window.setVisible(true);
+	        	repaint(0);
 	         }          
 		});
 	}
@@ -715,7 +701,18 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		//load game listener
 		loadGame.addActionListener(new ActionListener() {
 	         public void actionPerformed(ActionEvent e) {
-	        
+	        	   JFileChooser chooser = new JFileChooser();
+	        	    FileNameExtensionFilter filter = new FileNameExtensionFilter(
+		        	        "Scotland Yard File", "sy", "txt");
+		        	    chooser.setFileFilter(filter);
+	        	    chooser.setFileFilter(filter);
+	        	    int returnVal = chooser.showOpenDialog(window);
+	        	    if(returnVal == JFileChooser.APPROVE_OPTION) {
+	        	    	controllable.loadGame(chooser.getSelectedFile().getAbsolutePath());
+	        	    	if(visualisable.getNextPlayerToMove() == 0) currentPlayerID = playerVisualisable.getDetectiveIdList().size();
+	        	    	else currentPlayerID = visualisable.getNextPlayerToMove() - 1;
+	        	    	repaint(currentPlayerID);
+	        	    }
 	         }          
 		});
 	}
@@ -742,9 +739,36 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		//save game listener
 		saveGame.addActionListener(new ActionListener() {
 	         public void actionPerformed(ActionEvent e) {
+	        	 JFileChooser chooser = new JFileChooser();
+	        	    FileNameExtensionFilter filter = new FileNameExtensionFilter(
+	        	        "Scotland Yard File", "sy");
+	        	    chooser.setFileFilter(filter);
+	        	    int returnVal = chooser.showSaveDialog(window);
+	        	    if(returnVal == JFileChooser.APPROVE_OPTION) {
+		        	     controllable.saveGame(chooser.getSelectedFile().getAbsolutePath() + ".sy");
+	        	    }
 	        	 
 	         }          
 		});
+	}
+	
+	private void repaint(Integer IcurrentPlayerID)
+	{
+		 Component[] listComponents = layeredPane.getComponentsInLayer(1);
+		 for(Component b : listComponents)
+    	 {
+    		 layeredPane.remove(b);
+    	 }
+    	 //repaints the layeredpane
+		 layeredPane.repaint();
+		//sets the currentPlayerID to 0
+    	 currentPlayerID = IcurrentPlayerID;
+		 //displays all the players
+    	 displayPlayers();
+    	 //shows the Mr X tab
+    	 tabbedPane.setSelectedIndex(currentPlayerID);
+    	 
+    	 window.setVisible(true);
 	}
 	
 	//mouse moved listener
@@ -827,14 +851,8 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		}
 	}
 	
-	/*
-	if(visualisable.isVisible(tempPlayerID) && playerVisualisable.getMrXIdList().contains(tempPlayerID))
-	{
-		MrX.setVisible(true);
-	} else {
-		MrX.setVisible(false);
-	}
-	*/
+
+	
 	
 	private Initialisable.TicketType transportSelection(Initialisable.TicketType ticketType, Integer newNode)
 	{

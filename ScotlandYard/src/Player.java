@@ -1,8 +1,9 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 
-public abstract class Player {
+public abstract class Player implements Serializable{
 	//way to distinguish which player is which
 	enum playerType 
 	{

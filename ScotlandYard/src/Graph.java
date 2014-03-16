@@ -1,4 +1,5 @@
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +9,7 @@ import java.util.List;
  * classes that only contain the name of the node. The edges are 
  * more important as they define the structure of the graph. 
  */
-public class Graph
+public class Graph implements Serializable
 {
     private List<Node> nodes;
     private List<Edge> edges;

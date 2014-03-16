@@ -1,4 +1,6 @@
-public class MrX extends Player {
+import java.io.Serializable;
+
+public class MrX extends Player implements Serializable{
 	//stores visibility of Mr X
 	private boolean visible = false;
 	
