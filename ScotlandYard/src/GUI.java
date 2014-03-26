@@ -1,18 +1,16 @@
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
 import java.awt.*;
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.awt.event.*;
-import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 
 import javax.imageio.*;
-
 
 import java.awt.event.MouseMotionListener;
 
@@ -36,6 +34,7 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 	private BufferedImage mousecursor;
 	//if custom interface is enabled
 	boolean flag = false;
+	int bottom;
 	
 	//current game round
 	int currentRound = 1;
@@ -61,12 +60,12 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 	//displays map on screen
 	private void displayMap()
 	{
-		//gets screen size
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		//set window title
 		window = new JFrame("Scotland Yard");
 		window.setTitle("Scotland Yard");
-		Dimension effectiveScreenRes = getEffectiveScreenRes(screenSize);	
+		//gets screen size
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		Dimension effectiveScreenRes = getEffectiveScreenRes(screenSize);
 		window.setPreferredSize(effectiveScreenRes);
 		window.setResizable(false);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -93,24 +92,23 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		drawCursorLabel();
 		//displays players
 		displayPlayers();
+		//this gives height of the program title bar and the taskbar above the window if one exists - used later in the mouseMoved and mouseClicked methods
+		extraH = screenSize.height - window.getContentPane().getHeight() - bottom;
 	}
 	
 	private Dimension getEffectiveScreenRes(Dimension screenSize)
 	{
-		
 		//used to the size of the taskbar stuff above and below the window
 		Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(window.getGraphicsConfiguration());
-		int bottom = scnMax.bottom;
+		bottom = scnMax.bottom;
 		int left = scnMax.left;
 		int right = scnMax.right;
 		int top = scnMax.top;
 		//works out the effective screen width and screen height
 		int screenWidth = (int) screenSize.getWidth() - left - right - window.getWidth();
 		int screenHeight = (int) screenSize.getHeight() - bottom - top - window.getHeight();
-		//this gives height of the program title bar and the taskbar above the window if one exists - used later in the mouseMoved and mouseClicked methods
-		extraH = screenSize.height - window.getContentPane().getHeight() - bottom;
 		//stores the effective screen width and screen height in a dimension
-		return new Dimension(screenWidth,screenHeight);
+		return new Dimension(screenWidth, screenHeight);
 	}
 	
 	private ImageIcon setGameBackground(Dimension effectiveScreenRes)
@@ -633,46 +631,9 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 			//goes through the list of used moves and adds a new label for each one to the JPanel
 			String type = null;
 			URL iconToDisplay = null;
-			if(usedMoves.get(i) == Initialisable.TicketType.Bus)
-			{
-				type = "Bus";
-				iconToDisplay = busIcon;
-			}
-			else if (usedMoves.get(i) == Initialisable.TicketType.Taxi)
-			{
-				type = "Taxi";
-				iconToDisplay = taxiIcon;
-			}
-			else if (usedMoves.get(i) == Initialisable.TicketType.Underground){
-				type = "Underground";
-				iconToDisplay = tubeIcon;
-			}
-			else if (usedMoves.get(i) == Initialisable.TicketType.DoubleMove){
-				type = "Double move";
-				iconToDisplay = doubleIcon;
-			}
-			else if (usedMoves.get(i) == Initialisable.TicketType.SecretMove)
-			{
-				type = "Secret move";
-				iconToDisplay = secretIcon;
-			}
-			JLabel move = new JLabel("Move " + String.valueOf(i + 1) + ": " + type);
-			move.setIcon(new ImageIcon(iconToDisplay));
-			move.setForeground(Color.LIGHT_GRAY);
-			move.setOpaque(true);
-			if((5 + (30 * (i - temp))) > 300 * imageScale())
-			{
-				temp = i;
-				if(j == 0) x = (int) (window.getContentPane().getWidth() - resizedImageDimensions.getWidth() - 20) / 3;
-				else{
-					x = (int) (((window.getContentPane().getWidth() - resizedImageDimensions.getWidth() - 20) / 3) + 
-							((window.getContentPane().getWidth() - resizedImageDimensions.getWidth() - 20) / 3));
-				}
-				j++;
-			}
-			move.setSize(200, 20);
-			move.setLocation(x, 5 + (20 * (i - temp)));
-			move.setVisible(true);
+			Dimension mrXMove = getXYmoveLog(i, temp, j, x);
+			ArrayList<URL> icons = new ArrayList<URL>(Arrays.asList(busIcon, taxiIcon, tubeIcon, doubleIcon, secretIcon));
+			JLabel move = mrXMoveLabel(usedMoves.get(i), type, iconToDisplay, mrXMove, i, icons);
 			movesUsed.add(move);
 		}
 		movesUsed.setBackground(Color.DARK_GRAY);
@@ -687,6 +648,57 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		//add the tabbed pane to the layered pane and sets the layer to 1
 		layeredPane.add(moveLog);
 		layeredPane.setLayer(moveLog, 1);
+	}
+	
+	private JLabel mrXMoveLabel(Initialisable.TicketType ticket, String type, URL iconToDisplay, Dimension mrXMove, int i, ArrayList<URL> icons)
+	{
+		if(ticket == Initialisable.TicketType.Bus)
+		{
+			type = "Bus";
+			iconToDisplay = icons.get(0);
+		}
+		else if (ticket == Initialisable.TicketType.Taxi)
+		{
+			type = "Taxi";
+			iconToDisplay = icons.get(1);
+		}
+		else if (ticket == Initialisable.TicketType.Underground){
+			type = "Underground";
+			iconToDisplay = icons.get(2);
+		}
+		else if (ticket == Initialisable.TicketType.DoubleMove){
+			type = "Double move";
+			iconToDisplay = icons.get(3);
+		}
+		else if (ticket == Initialisable.TicketType.SecretMove)
+		{
+			type = "Secret move";
+			iconToDisplay = icons.get(4);
+		}
+		
+		JLabel move = new JLabel("Move " + String.valueOf(i + 1) + ": " + type);
+		int locationX = (int) mrXMove.getWidth();
+		int locationY = (int) mrXMove.getHeight();
+		move = makeJLabel(move, locationX, locationY, 200, 20, Color.LIGHT_GRAY, null, null, new ImageIcon(iconToDisplay));
+		move.setOpaque(true);
+		move.setVisible(true);
+		return move;
+	}
+	
+	//works out where to place the new mr X move in the move log
+	private Dimension getXYmoveLog(int i, int temp, int j, int x)
+	{
+		if((5 + (30 * (i - temp))) > 300 * imageScale())
+		{
+			temp = i;
+			if(j == 0) x = (int) (window.getContentPane().getWidth() - resizedImageDimensions.getWidth() - 20) / 3;
+			else{
+				x = (int) (((window.getContentPane().getWidth() - resizedImageDimensions.getWidth() - 20) / 3) + 
+						((window.getContentPane().getWidth() - resizedImageDimensions.getWidth() - 20) / 3));
+			}
+			j++;
+		}
+		return new Dimension(x, 5 + (20 * (i - temp)));
 	}
 	
 	//draws a border around all the possible places the current player can move to

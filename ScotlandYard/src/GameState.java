@@ -10,54 +10,6 @@ import java.util.Random;
 
 import javax.swing.JOptionPane;
 
-/*
- TO DO LIST: Sunday
- //Make a list of all references if used + UNDERSTAND all of code before submission <- can do after
-
- DONE: Friday
- //custom number of detectives -- DONE!
- //Mr X tickets - get from pile -- DONE
- //what to do when players run out of tickets -- DOxNE
- //custom interface stuff only works if there is a -i argument when running
- //scaling font of current and next player labels
- //Shows current round
- //movePlayer works - 14 is hardcoded - still works cba
- //win state if detectives and mr x overlap
- //what happens if mr x can only move to 3 places with taxi tickets BUT he has no taxi tickets left
- //SORT SCALING PROPERLY - WORKS FOR 1280 x 800 and upwards
- //sorted out newgame bug + dialog box cancel bug
- //make sure detectives don't overlap each other
- //secret move works
-
-DONE: Saturday
-//BUG - win game - MR X ROUND NUMBER NOT UPDATING -- it works fine now BUT round number is showing incorrectly sometimes in GUI
-//set visibility of mr x on map 
- * 
-DONE: Sunday
- //implement load and save game
- //get double move to work
- //make new gui icons etc and use them
- //Make code dry, 30 lines per method, 80 characters per line, improve variable and function names if need be
-
- NOT SOLVABLE
- //Error changing number of detectives at start
- *
- IMAGES NEEDED:
- //HAS to be somewhat similar to current layout -- pain to redo all of setLocation completely for every component
- //image for new button
- //image for load button
- //image for save button
- //way of representing current player label
- //way of representing next player label
- //image for mr x tab
- //image for detective tab
- //image for mr x move log tab
- //image for tabbed panes
- //image for whole background
- * 
- * 
- */
-
 /**
  * Class that will hold the state of the game. This is the class that will need
  * to implement the interfaces that we have provided you with
@@ -143,7 +95,6 @@ public class GameState implements MapVisualisable, Initialisable,
 		}
 		// currentPlayerID is Mr X
 		currentPlayerID = mrXIdList.get(0);
-
 		return null;
 	}
 
@@ -215,8 +166,7 @@ public class GameState implements MapVisualisable, Initialisable,
 		posTxtStrings = fileContents.split("\n");
 	}
 
-	// reads text file and stores the whole thing in a string - COPIED AND
-	// PASTED - HAVE TO FIND ALTERNATIVE OR UNDERSTAND
+	// reads text file and stores the whole thing in a string
 	private String readFileAsString(String filePath) throws IOException {
 		StringBuffer fileData = new StringBuffer();
 		BufferedReader reader = new BufferedReader(new FileReader(filePath));
@@ -667,7 +617,6 @@ public class GameState implements MapVisualisable, Initialisable,
 		return gameOver;
 	}
 
-	// IMPLEMENT LATER
 	@Override
 	public Boolean saveGame(String filename) {
 		boolean check = false;
@@ -690,7 +639,6 @@ public class GameState implements MapVisualisable, Initialisable,
 		return check;
 	}
 
-	// IMPLEMENT LATER
 	@Override
 	public Boolean loadGame(String filename) {
 		boolean check = false;
@@ -725,7 +673,7 @@ public class GameState implements MapVisualisable, Initialisable,
 		return player.used;
 	}
 
-	// checks if a player is visible, given -- USE FIX LATER
+	// checks if a player is visible, given player ID
 	@Override
 	public Boolean isVisible(Integer playerId) {
 		boolean visible = false;
