@@ -403,11 +403,11 @@ public class GameState implements MapVisualisable, Initialisable,
 						// if there is a match in this "if clause" i.e. if the
 						// move is valid given the player's tickets, the tickets
 						// are updated and check remains true
-						check = checkValidDetectiveTickets(check, player,
-								mrXPlayer, ticketType);
+						check = checkPositionNotOccupied(check, targetNodeId);
 						// if check is true afterwards -- the player has the
 						// number of tickets available
-						check = checkPositionNotOccupied(check, targetNodeId);
+						if(check) check = checkValidDetectiveTickets(check, player,
+									mrXPlayer, ticketType);
 						if (check == true) {
 							setNextPlayer((Player) player, targetNodeId, false);
 						} else {

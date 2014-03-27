@@ -9,9 +9,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.awt.event.*;
 import java.awt.image.*;
-
 import javax.imageio.*;
-
 import java.awt.event.MouseMotionListener;
 
 public class GUI extends GameVisualiser implements ActionListener, MouseListener, MouseMotionListener  {
@@ -629,11 +627,9 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		for(int i = 0; i < usedMoves.size(); i++)
 		{
 			//goes through the list of used moves and adds a new label for each one to the JPanel
-			String type = null;
-			URL iconToDisplay = null;
 			Dimension mrXMove = getXYmoveLog(i, temp, j, x);
 			ArrayList<URL> icons = new ArrayList<URL>(Arrays.asList(busIcon, taxiIcon, tubeIcon, doubleIcon, secretIcon));
-			JLabel move = mrXMoveLabel(usedMoves.get(i), type, iconToDisplay, mrXMove, i, icons);
+			JLabel move = mrXMoveLabel(usedMoves.get(i), mrXMove, i, icons);
 			movesUsed.add(move);
 		}
 		movesUsed.setBackground(Color.DARK_GRAY);
@@ -650,8 +646,10 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		layeredPane.setLayer(moveLog, 1);
 	}
 	
-	private JLabel mrXMoveLabel(Initialisable.TicketType ticket, String type, URL iconToDisplay, Dimension mrXMove, int i, ArrayList<URL> icons)
+	private JLabel mrXMoveLabel(Initialisable.TicketType ticket, Dimension mrXMove, int i, ArrayList<URL> icons)
 	{
+		String type = null;
+		URL iconToDisplay = null;
 		if(ticket == Initialisable.TicketType.Bus)
 		{
 			type = "Bus";
@@ -775,11 +773,15 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 	     		String s = (String)JOptionPane.showInputDialog(detectiveInput,"Pick the number of detectives: ", "Detective selection",
 	     	                JOptionPane.PLAIN_MESSAGE, null , possibilities, "3");
 	     		//stores the number of detectives
-	     		if(s == null) System.exit(0);
-	     		else noDetectives = Integer.parseInt(s);
-	     		//reinitialises the game
-	        	initialisable.initialiseGame(noDetectives);
-	        	repaint(0);
+	     		if(s != null)
+	     		{
+	     			noDetectives = Integer.parseInt(s);
+		     		//reinitialises the game
+		        	initialisable.initialiseGame(noDetectives);
+		        	repaint(0);
+	     		} else {
+	     			window.setVisible(true);
+	     		}
 	         }          
 		});
 	}
@@ -986,7 +988,6 @@ public class GUI extends GameVisualiser implements ActionListener, MouseListener
 		else if (s == "Taxi") ticketType = Initialisable.TicketType.Taxi;
 		else if (s == "Secret move") ticketType = Initialisable.TicketType.SecretMove;
 		else if (s == "Double move") ticketType = Initialisable.TicketType.DoubleMove;
-		else JOptionPane.showMessageDialog(null, "Invalid move" ,"Player move", JOptionPane.ERROR_MESSAGE);
 		return ticketType;
 	}
 	
